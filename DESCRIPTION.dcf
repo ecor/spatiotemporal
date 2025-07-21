@@ -1,0 +1,16 @@
+Package: spatiotemporal
+Maintainer: Emanuele Cordano <emanuele.cordano@gmail.com>
+License: EUPL (>= 1.2)
+Title: Tools to handle spatiotemporal data organized in Time Series
+Type: Package
+Authors@R: c(person(given="Emanuele",family="Cordano",role = c("aut","cre"),email = "emanuele.cordano@gmail.com",comment = c(ORCID=  "0000-0002-3508-5898")))
+Description: A spatiotemporal database schema. It has been created to handle weather data from weather stations. 
+Repository: Github
+URL: none
+Date: 2025-03-18
+Version: 0.0.2
+Depends:
+    R (>= 3.5.0),sf,data.table
+Imports:rlang,dplyr
+Suggests: nomnoml,stringr,terra,leaflet,ggplot2
+RoxygenNote: 7.3.2

@@ -1,0 +1,102 @@
+<GSOD>
+    <Variable name="TEMP">
+        <Description>Mean daily temperature converted to degrees C to tenths. Missing = NA</Description>
+        <Attributes>
+            <Attribute name="TEMP_ATTRIBUTES">Number of observations used in calculating mean daily temperature</Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="DEWP">
+        <Description>Mean daily dew point converted to degrees C to tenths. Missing = NA</Description>
+        <Attributes>
+            <Attribute name="DEWP_ATTRIBUTES">Number of observations used in calculating mean daily dew point</Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="SLP">
+        <Description>Mean sea level pressure in millibars to tenths. Missing = NA</Description>
+        <Attributes>
+            <Attribute name="SLP_ATTRIBUTES">Number of observations used in calculating mean sea level pressure</Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="STP">
+        <Description>Mean station pressure for the day in millibars to tenths. Missing = NA</Description>
+        <Attributes>
+            <Attribute name="STP_ATTRIBUTES">Number of observations used in calculating mean station pressure</Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="VISIB">
+        <Description>Mean visibility for the day converted to kilometres to tenths. Missing = NA</Description>
+        <Attributes>
+            <Attribute name="VISIB_ATTRIBUTES">Number of observations used in calculating mean daily visibility</Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="WDSP">
+        <Description>Mean daily wind speed value converted to metres/second to tenths. Missing = NA</Description>
+        <Attributes>
+            <Attribute name="WDSP_ATTRIBUTES">Number of observations used in calculating mean daily wind speed</Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="MXSPD">
+        <Description>Maximum sustained wind speed reported for the day converted to metres/second to tenths. Missing = NA</Description>
+    </Variable>
+    <Variable name="GUST">
+        <Description>Maximum wind gust reported for the day converted to metres/second to tenths. Missing = NA</Description>
+    </Variable>
+    <Variable name="MAX">
+        <Description>Maximum temperature reported during the day converted to Celsius to tenths–time of max temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</Description>
+        <Attributes>
+            <Attribute name="MAX_ATTRIBUTES">Blank indicates max temp was taken from the explicit max temp report and not from the ‘hourly’ data. An “*” indicates max temp was derived from the hourly data (i.e., highest hourly or synoptic-reported temperature)</Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="MIN">
+        <Description>Minimum temperature reported during the day converted to Celsius to tenths–time of min temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</Description>
+        <Attributes>
+            <Attribute name="MIN_ATTRIBUTES">Blank indicates max temp was taken from the explicit min temp report and not from the ‘hourly’ data. An “*” indicates min temp was derived from the hourly data (i.e., highest hourly or synoptic-reported temperature)</Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="PRCP">
+        <Description>Total precipitation (rain and/or melted snow) reported during the day converted to millimetres to hundredths; will usually not end with the midnight observation, i.e., may include latter part of previous day. A value of “.00” indicates no measurable precipitation (includes a trace). Missing = NA</Description>
+        <Attributes>
+            <Attribute name="PRCP_ATTRIBUTES">
+                <Value code="A">1 report of 6-hour precipitation amount</Value>
+                <Value code="B">Summation of 2 reports of 6-hour precipitation amount</Value>
+                <Value code="C">Summation of 3 reports of 6-hour precipitation amount</Value>
+                <Value code="D">Summation of 4 reports of 6-hour precipitation amount</Value>
+                <Value code="E">1 report of 12-hour precipitation amount</Value>
+                <Value code="F">Summation of 2 reports of 12-hour precipitation amount</Value>
+                <Value code="G">1 report of 24-hour precipitation amount</Value>
+                <Value code="H">Station reported ‘0’ as the amount for the day (e.g. from 6-hour reports), but also reported at least one occurrence of precipitation in hourly observations–this could indicate a trace occurred, but should be considered as incomplete data for the day</Value>
+                <Value code="I">Station did not report any precipitation data for the day and did not report any occurrences of precipitation in its hourly observations–it’s still possible that precipitation occurred but was not reported</Value>
+            </Attribute>
+        </Attributes>
+    </Variable>
+    <Variable name="SNDP">
+        <Description>Snow depth in millimetres to tenths. Missing = NA</Description>
+    </Variable>
+    <Variable name="I_FOG">
+        <Description>Indicator for fog, (1 = yes, 0 = no/not reported) for the occurrence during the day</Description>
+    </Variable>
+    <Variable name="I_RAIN_DRIZZLE">
+        <Description>Indicator for rain or drizzle, (1 = yes, 0 = no/not reported) for the occurrence during the day</Description>
+    </Variable>
+    <Variable name="I_SNOW_ICE">
+        <Description>Indicator for snow or ice pellets, (1 = yes, 0 = no/not reported) for the occurrence during the day</Description>
+    </Variable>
+    <Variable name="I_HAIL">
+        <Description>Indicator for hail, (1 = yes, 0 = no/not reported) for the occurrence during the day</Description>
+    </Variable>
+    <Variable name="I_THUNDER">
+        <Description>Indicator for thunder, (1 = yes, 0 = no/not reported) for the occurrence during the day</Description>
+    </Variable>
+    <Variable name="I_TORNADO_FUNNEL">
+        <Description>Indicator for tornado or funnel cloud, (1 = yes, 0 = no/not reported) for the occurrence during the day</Description>
+    </Variable>
+    <Variable name="EA">
+        <Description>Mean daily actual vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</Description>
+    </Variable>
+    <Variable name="ES">
+        <Description>Mean daily saturation vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</Description>
+    </Variable>
+    <Variable name="RH">
+        <Description>Mean daily relative humidity as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</Description>
+    </Variable>
+</GSOD>
