@@ -11,6 +11,7 @@ Date: 2025-03-18
 Version: 0.0.2
 Depends:
     R (>= 3.5.0),sf,data.table
-Imports:rlang,dplyr
+Imports:rlang,dplyr,knitr
 Suggests: nomnoml,stringr,terra,leaflet,ggplot2
+VignetteBuilder: knitr
 RoxygenNote: 7.3.2

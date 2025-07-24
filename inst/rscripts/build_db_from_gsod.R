@@ -21,7 +21,7 @@ library(stringr)
 library(sf)
 library(xml2)
 library(GSODR)
-
+library(readr)
 #### VARIABLES
 ###vxml <- "/home/ecor/local/rpackages/rendena100/rendena10x/inst/ext_data/gsod/description/gsod_variables.xml" %>% 
 
@@ -74,13 +74,11 @@ attributes_data_table$variable_name <- names(variable_attribute_list)
 ## Lake Tanganiyka: https://en.wikipedia.org/wiki/Lake_Tanganyika
 lat <- -6.1
 lon <- 29.5
-n <- nearest_stations(LAT = lat, LON = lon, distance = 1700)
+n <- nearest_stations(LAT = lat, LON = lon, distance = 1000)
 
 
 #p <- "/home/ecor/local/data/climate/gsod/tanganyika/gsod_tanganyika_stdns_v02.shp" %>% st_read()
 p <- st_as_sf(n,coords=c("LON","LAT"),crs=4326)
-
-
 
 p <- p[!duplicated(p$STNID),]
 ###
@@ -116,26 +114,38 @@ v <- "/home/ecor/local/rpackages/jrc/spatiotemporal/inst/shiny/gsodapp/ext/" |> 
 v <- "/home/ecor/local/rpackages/jrc/spatiotemporal/inst/shiny/gsodapp/ext/" |> list.files(pattern=".rds",full.name=TRUE) |> sort() |> lapply(readRDS) |> rbindlist()
 
 ids <- p$name2 |> str_replace_all("_"," ") |> str_split(" ") |> sapply(FUN=function(x){x[2]})
-years=1960:2024
-gsod_files="station_gsod_%s_%s.csv"
+years=1979:2025
+gsod_files="/home/ecor/local/data/climate/gsod/tanganyika_v2/station_gsod_%s_%s.csv"
 gsod <- list()
 for (id in ids) {
   gsod[[id]] <- list()
-  for (year in years)
+  for (year in years) {
+    print(year)
+    print(id)
     nn <- sprintf("Y%s",as.character(year))
     filename <- gsod_files |> sprintf(id,nn)
-  
-    gsod[[id]][[nn]] <- get_GSOD(station=id,year=year)
-    write.table(gsod[[id]][[nn]],file=filename,quote=FALSE,sep=",",col.names=TRUE,row.names = FALSE)
-
-  
+    cond <- file.exists(filename)
+    download_cond <- FALSE
+    if (cond) {
+      gsod[[id]][[nn]] <- filename |> read_csv() ###read.table(filename,header=TRUE,sep=",",quote=FALSE)
+    } else if (download_cond) {  
+      gsod[[id]][[nn]] <- get_GSOD(station=id,year=year) |> try(silent=TRUE)
+      if (is(gsod[[id]][[nn]],"try-error")) {
+        gsod[[id]][[nn]] <- NULL
+      } else if (is.data.table(gsod[[id]][[nn]])) {
+        write.table(gsod[[id]][[nn]],file=filename,quote=FALSE,sep=",",col.names=TRUE,row.names = FALSE)
+      }
+    }
+  }
 }
 
 
+#id="638010-99999"
+#nn="Y2024"
+#gsod[[id]][[nn]]
+#filename <- gsod_files |> sprintf(id,nn)
+#read.table(filename,header=TRUE,sep=",",quote=FALSE)
 stop("HERE")
-
-
-
 
 
 ##v <- "/home/ecor/local/rpackages/rendena100/rendena10x/inst/ext_data/gsod/gsod_tanganyika_2020.rds" %>% readRDS()
