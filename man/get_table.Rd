@@ -2,14 +2,14 @@
 % Please edit documentation in R/get_table.R
 \name{get_table}
 \alias{get_table}
-\title{Get a teble, eg. variables (or measurement types)}
+\title{Get a table, e.g. variables (or measurement types)}
 \usage{
 get_table(
   x,
   table_name = "ts",
   vfilter = NULL,
-  data.table = TRUE,
-  sf = FALSE,
+  data.table = (table_name != "p"),
+  sf = (table_name == "p"),
   ...
 )
 }
@@ -27,7 +27,7 @@ get_table(
 \item{...}{further arguments}
 }
 \description{
-Get a teble, eg. variables (or measurement types)
+Get a table, e.g. variables (or measurement types)
 }
 \examples{
 

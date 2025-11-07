@@ -1,5 +1,5 @@
 NULL
-#' Get a teble, eg. variables (or measurement types)
+#' Get a table, e.g. variables (or measurement types)
 #'
 #'
 #' @param x database or dateset, e.g  like \code{\link{db}}
@@ -27,7 +27,7 @@ NULL
 #' 
 
 
-get_table <- function(x,table_name="ts",vfilter=NULL,data.table=TRUE,sf=FALSE,...) {
+get_table <- function(x,table_name="ts",vfilter=NULL,data.table=(table_name!="p"),sf=(table_name=="p"),...) {
   
   
   
