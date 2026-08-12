@@ -11,7 +11,7 @@ Date: 2025-11-07
 Version: 0.0.3
 Depends:
     R (>= 3.5.0),sf,data.table
-Imports:rlang,dplyr,stringr
+Imports: rlang,dplyr,stringr
 Suggests: nomnoml,terra,leaflet,ggplot2,knitr
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
+Config/roxygen2/version: 8.0.0
