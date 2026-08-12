@@ -1,7 +1,11 @@
 ## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 10,
+  fig.height = 6,
+  out.width = "100%",
+  fig.align = "center"
 )
 
 ## ----echo=FALSE, results='asis'-----------------------------------------------
@@ -20,7 +24,7 @@ help("get_variables")
 help(db)
 
 
-## ----echo=FALSE, results='asis',fig.show='hold',fig.height=100----------------
+## ----echo=FALSE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
 
 library(spatiotemporal)
 library(nomnoml)
@@ -45,27 +49,27 @@ schema <- lapply(db, FUN=function(t, nfks) {
 
 out2 <- list()
 for (it in names(schema)) {
-  
+
   content <- paste(schema[[it]]$column, schema[[it]]$type, sep = ": ", collapse = "||")
   out2[[it]] <- sprintf("[<table>%s| %s]", it, content)
   inn <- which(!is.na(schema[[it]]$reference))
-  if (length(inn) > 0) { 
+  if (length(inn) > 0) {
     refs <- sprintf("[%s] <- 1..n[%s]", schema[[it]]$reference[inn], it)
     out2[[it]] <- c(out2[[it]], refs)
   }
 }
 
-nomnoml(paste(unlist(out2), collapse="\n"), png=TRUE,width=600)
+nomnoml(paste(unlist(out2), collapse="\n"), png=TRUE, width=1400, height=700)
 
 
 
 
-## ----echo=FALSE, results='asis',fig.show='hold',fig.height=100----------------
+## ----echo=FALSE, results='asis'-----------------------------------------------
 
 
 data(db)
 ##
-db0 <- db 
+db0 <- db
 ##
 years <- 2015:2024
 
@@ -73,7 +77,7 @@ country <- "Morocco"
 
 project_name <- country
 action_description <- sprintf("%s_%s",country,paste(range(years),collapse="_"))
-### new project 
+### new project
 project_id <- nrow(db0$project)+1
 db$project <- rbind(db$project, data.table::data.table(ID = project_id, name = project_name))
 
@@ -86,7 +90,7 @@ new_action <- data.table::data.table(ID=action_id,description=action_description
 db$action <- rbind(db$action,new_action)
 
 
-## ----echo=FALSE, results='asis',fig.show='hold',fig.height=100----------------
+## ----echo=FALSE, results='asis'-----------------------------------------------
 library(GSODR)
 weather_ts_data_rds <- sprintf("/home/ecor/local/rpackages/jrc/spatiotemporal/inst/ext_data/%s.rds",action_description)
 if (file.exists(weather_ts_data_rds)) {
@@ -100,7 +104,7 @@ if (file.exists(weather_ts_data_rds)) {
 
 
 
-## ----echo=FALSE, results='asis',fig.show='hold',fig.height=100----------------
+## ----echo=FALSE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
 
 library(terra)
 library(sf)
@@ -141,7 +145,7 @@ plet(vect(db$p),cex=20)
 
 
 
-## ----echo=FALSE, results='asis',fig.show='hold',fig.height=100----------------
+## ----echo=FALSE, results='asis'-----------------------------------------------
 library(dplyr)
 
 v <- weather_ts_data
