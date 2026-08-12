@@ -8,7 +8,7 @@ knitr::opts_chunk$set(
   fig.align = "center"
 )
 
-## ----echo=FALSE, results='asis'-----------------------------------------------
+## ----echo=TRUE, results='asis'------------------------------------------------
 library(spatiotemporal)
 
 help(package="spatiotemporal")
@@ -24,7 +24,7 @@ help("get_variables")
 help(db)
 
 
-## ----echo=FALSE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
+## ----echo=TRUE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
 
 library(spatiotemporal)
 library(nomnoml)
@@ -64,7 +64,7 @@ nomnoml(paste(unlist(out2), collapse="\n"), png=TRUE, width=1400, height=700)
 
 
 
-## ----echo=FALSE, results='asis'-----------------------------------------------
+## ----echo=TRUE, results='asis'------------------------------------------------
 
 
 data(db)
@@ -90,7 +90,7 @@ new_action <- data.table::data.table(ID=action_id,description=action_description
 db$action <- rbind(db$action,new_action)
 
 
-## ----echo=FALSE, results='asis'-----------------------------------------------
+## ----echo=TRUE, results='asis'------------------------------------------------
 library(GSODR)
 weather_ts_data_rds <- sprintf("/home/ecor/local/rpackages/jrc/spatiotemporal/inst/ext_data/%s.rds",action_description)
 if (file.exists(weather_ts_data_rds)) {
@@ -104,7 +104,7 @@ if (file.exists(weather_ts_data_rds)) {
 
 
 
-## ----echo=FALSE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
+## ----echo=TRUE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
 
 library(terra)
 library(sf)
@@ -145,7 +145,7 @@ plet(vect(db$p),cex=20)
 
 
 
-## ----echo=FALSE, results='asis'-----------------------------------------------
+## ----echo=TRUE, results='asis'------------------------------------------------
 library(dplyr)
 
 v <- weather_ts_data
