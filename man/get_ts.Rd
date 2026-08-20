@@ -9,8 +9,12 @@ get_ts(
   ts_table_name = "ts",
   get_p_args = list(),
   get_variable_args = list(),
+  get_attribute_args = list(),
+  get_action_args = list(),
   p_id = NA,
   variable_id = NA,
+  attribute_id = NA,
+  action_id = NA,
   timestep = 24 * 3600,
   regular_timestamptz = FALSE,
   ...
@@ -25,9 +29,17 @@ get_ts(
 
 \item{get_variable_args}{list of possible arguments for \code{\link{get_variable}}}
 
+\item{get_attribute_args}{list of possible arguments for \code{\link{get_attribute}}}
+
+\item{get_action_args}{list of possible arguments for \code{\link{get_action}}}
+
 \item{p_id}{id number for \code{p} table}
 
 \item{variable_id}{id number for \code{variable} table}
+
+\item{attribute_id}{id number for \code{attribute} table}
+
+\item{action_id}{id number for \code{action} table}
 
 \item{timestep}{timstep used between two adjacent timestamps . Unit is second. It is used if \code{regular_timestamptz==TRUE}.}
 

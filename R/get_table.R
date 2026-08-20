@@ -36,6 +36,7 @@ get_table <- function(x,table_name="ts",vfilter=NULL,data.table=(table_name!="p"
 
   
   out <- x[[table_name]]
+  print(out)
   if (length(vfilter)>0) for (i in 1:length(vfilter)) {
     condition <- vfilter[[i]]
     out <- out |> dplyr::filter(!!rlang::parse_expr(condition))
@@ -66,9 +67,9 @@ get_table <- function(x,table_name="ts",vfilter=NULL,data.table=(table_name!="p"
       values <- paste0("'",values,"'")
     
     }
-    values <- values |> paste(collapse=",")
+    values <- values |> unique() |> paste(collapse=",")
     condition <- sprintf("%s %s c(%s)",it,verb,values) 
-    
+    print(condition)
     out <- out |> dplyr::filter(!!rlang::parse_expr(condition))
     
   }

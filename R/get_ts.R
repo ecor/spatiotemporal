@@ -6,8 +6,12 @@ NULL
 #' @param ts_table_name ts variable table name
 #' @param get_p_args list of possible arguments for \code{\link{get_p}} 
 #' @param get_variable_args  list of possible arguments for \code{\link{get_variable}}  
+#' @param get_attribute_args list of possible arguments for \code{\link{get_attribute}}  
+#' @param get_action_args list of possible arguments for \code{\link{get_action}}  
 #' @param p_id id number for \code{p} table
 #' @param variable_id id number for \code{variable} table
+#' @param action_id id number for \code{action} table
+#' @param attribute_id id number for \code{attribute} table
 #' @param timestep timstep used between two adjacent timestamps . Unit is second. It is used if \code{regular_timestamptz==TRUE}.
 #' @param regular_timestamptz logical. Default is \code{FALSE} . If it is \code{TRUE} the timestamps are regularly distributed with possible \code{value} values equal to \code{NA}. 
 #' @param ... further arguments
@@ -72,13 +76,15 @@ NULL
 #' 
 
 get_ts <- function(x,ts_table_name="ts",get_p_args=list(),
-                   get_variable_args=list(),p_id=NA,variable_id=NA,
+                   get_variable_args=list(),get_attribute_args=list(),get_action_args=list(),p_id=NA,variable_id=NA,attribute_id=NA,action_id=NA,
                    timestep=24*3600,regular_timestamptz=FALSE,
                    ...) {
   
   
   if (all(is.na(p_id))) p_id <- NULL
   if (all(is.na(variable_id))) variable_id <- NULL
+  if (all(is.na(attribute_id))) attribute_id <- NULL
+  if (all(is.na(action_id))) action_id <- NULL
   
   if (length(get_p_args)>0){
     get_p_args$x <- x 
@@ -134,10 +140,67 @@ get_ts <- function(x,ts_table_name="ts",get_p_args=list(),
     ## TO DO 
   }
   
+  
+  ## attributeS
+  if (length(get_attribute_args)>0){
+    get_attribute_args$x <- x 
+    get_attribute_formals <- formals(get_attribute) |> as.list()
+    get_attribute_formals <- get_attribute_formals[names(get_attribute_formals)!="..."]
+    get_attribute_formals <- get_attribute_formals[!(names(get_attribute_formals) %in% names(get_attribute_args))]
+    
+    if (length(get_attribute_formals)>0) {
+      
+      get_attribute_args <- c(get_attribute_formals,get_attribute_args)
+      
+      
+    }
+    
+    attribute <- do.call(what="get_attribute",args=get_attribute_args)
+    
+    
+    
+    if (is.null(attribute_id)) attribute_id <- unique(attribute$ID)
+    
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  ## ACTIONS
+  if (length(get_action_args)>0){
+    get_action_args$x <- x 
+    get_action_formals <- formals(get_action) |> as.list()
+    get_action_formals <- get_action_formals[names(get_action_formals)!="..."]
+    get_action_formals <- get_action_formals[!(names(get_action_formals) %in% names(get_action_args))]
+    
+    if (length(get_action_formals)>0) {
+      
+      get_action_args <- c(get_action_formals,get_action_args)
+    
+      
+    }
+    
+    action <- do.call(what="get_action",args=get_action_args)
+    
+ 
+    
+    if (is.null(action_id)) action_id <- unique(action$ID)
+   
+  }
+  
+  
+  
+  
+  
+  
     
   
   
-  out <- get_table(x,table_name=ts_table_name,p_id=p_id,variable_id=variable_id,...)
+  out <- get_table(x,table_name=ts_table_name,p_id=p_id,variable_id=variable_id,action_id=action_id,attribute_id=attribute_id,...)
   if (regular_timestamptz==TRUE) {
     rr <- range(out$timestamptz)
     out <- out |> dplyr::full_join(data.table::data.table(timestamptz=seq(from=rr[1],to=rr[2],by=timestep))) |> 
