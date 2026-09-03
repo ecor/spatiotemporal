@@ -12,6 +12,6 @@ Version: 0.0.3
 Depends:
     R (>= 3.5.0),sf,data.table
 Imports: rlang,dplyr,stringr
-Suggests: nomnoml,terra,leaflet,ggplot2,knitr
+Suggests: nomnoml,terra,leaflet,ggplot2,knitr,GSODR,countrycode,crosstalk,httr,openxlsx,plotly,readxl,xml2
 VignetteBuilder: knitr
 Config/roxygen2/version: 8.0.0

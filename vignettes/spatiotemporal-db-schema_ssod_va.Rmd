@@ -1,10 +1,10 @@
 ---
-title: "Spatiotemporal DB schema"
+title: "Spatiotemporal DB schema with SSOD data"
 author: package author
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Spatiotemporal DB schema}
+  %\VignetteIndexEntry{Spatiotemporal DB schema with SSOD data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
