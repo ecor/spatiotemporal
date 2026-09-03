@@ -1,0 +1,566 @@
+## ----setup, include = FALSE---------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 10,
+  fig.height = 6,
+  out.width = "100%",
+  fig.align = "center"
+)
+
+## ----echo=TRUE, results='asis'------------------------------------------------
+library(spatiotemporal)
+help(package="spatiotemporal")
+help("get_table")
+help("get_ts")
+help("get_p")
+help("get_variables")
+help(db)
+
+## ----echo=TRUE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
+library(spatiotemporal)
+library(nomnoml)
+library(stringr)
+library(data.table)
+data(db)
+## DATA BASE SCHEMA DESIGN
+schema <- lapply(db, FUN=function(t, nfks) {
+ #### print(nfks)
+  o <- sapply(as.list(t), FUN=function(x) {class(x)})
+  o2 <- data.frame(column=names(o), type=as.character(o))
+  o2$reference <- as.character(NA)
+  iin <- which(o2$column %in% nfks)
+  o2$reference[iin] <- o2$column[iin]
+  o2$reference[iin] <- str_sub(o2$reference[iin], end=-4)
+  return(o2)
+}, nfks=sprintf("%s_id", names(db)))
+out2 <- list()
+for (it in names(schema)) {
+  content <- paste(schema[[it]]$column, schema[[it]]$type, sep = ": ", collapse = "||")
+  out2[[it]] <- sprintf("[<table>%s| %s]", it, content)
+  inn <- which(!is.na(schema[[it]]$reference))
+  if (length(inn) > 0) {
+    refs <- sprintf("[%s] <- 1..n[%s]", schema[[it]]$reference[inn], it)
+    out2[[it]] <- c(out2[[it]], refs)
+  }
+}
+nomnoml(paste(unlist(out2), collapse="\n"), png=TRUE, width=1400, height=700)
+
+## ----echo=TRUE, results='asis'------------------------------------------------
+data(db)
+##
+db0 <- db
+##
+years <- 2015:2024
+country <- "Morocco"
+project_name <- country
+action_description <- sprintf("%s_%s",country,paste(range(years),collapse="_"))
+### new project
+project_id <- nrow(db0$project)+1
+db$project <- rbind(db$project, data.table::data.table(ID = project_id, name = project_name))
+### new action
+action_id <- nrow(db0$action)+1
+operator_id <- 1
+new_action <- data.table::data.table(ID=action_id,description=action_description,timestamptz=Sys.time(),operator_id=operator_id,project_id=project_id)
+db$action <- rbind(db$action,new_action)
+
+## ----echo=TRUE, results='asis'------------------------------------------------
+library(GSODR)
+weather_ts_data_rds <- sprintf("/home/ecor/local/rpackages/jrc/spatiotemporal/inst/ext_data/%s.rds",action_description)
+if (file.exists(weather_ts_data_rds)) {
+  weather_ts_data <- readRDS(weather_ts_data_rds)
+} else {
+  weather_ts_data <- get_GSOD(years = years, country = country)
+}
+
+## ----echo=TRUE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
+library(terra)
+library(sf)
+p <- weather_ts_data |>
+  dplyr::select(STNID, NAME, CTRY, COUNTRY_NAME, ISO2C, ISO3C, STATE,
+                LATITUDE, LONGITUDE, ELEVATION, BEGIN, END) |>
+  dplyr::filter(!duplicated(STNID))
+prefix <- "GSOD station: data through GSODR R package"
+# p$description <- apply(p, 1, function(row) {
+#   paste(c(prefix, paste(names(row), row, sep = " : ")), collapse = " ; ")
+# })
+p$description <- purrr::pmap_chr(p, function(...) {
+  row <- list(...)
+  paste(c(prefix, paste(names(row), row, sep = " : ")), collapse = " ; ")
+})
+p <- sf::st_as_sf(
+  p,
+  coords = c("LONGITUDE", "LATITUDE"),
+  crs = st_crs(db$p),
+  remove = FALSE
+)
+####
+p$name2 <- sprintf("GSOD_%s (%s - %s)",p$STNID,p$NAME,p$ISO2C)
+p$provider_id <- db$provider$ID[db$provider$name=="gsod"]
+p$ID <- nrow(db0$p)+1:nrow(p)
+db$p <- rbind(db0$p,p[,names(db0$p)])
+plet(vect(db$p),cex=20)
+
+## ----echo=TRUE, results='asis'------------------------------------------------
+library(dplyr)
+v <- weather_ts_data
+v$timestamptz <- as.Date(v$YEARMODA) |> as.POSIXct(tz="GMT")
+v$name2 <- sprintf("GSOD_%s (%s - %s)",v$STNID,v$NAME,v$ISO2C)
+vp <- db$p |> as.data.table()  |> dplyr::mutate(p_id=ID) |> dplyr::select(p_id,name2)
+v <- left_join(v,vp)
+ids <- c("timestamptz","p_id")
+vv <- v  |> dplyr::select(which(names(v) %in% c(ids,db$variable$name))) |> melt(id.vars=ids)
+vv <- db$variable |> mutate(variable_id=ID,variable=name) |> select(variable_id,variable) |> right_join(vv) |> select(-variable)
+va <- v  |> dplyr::select(which(names(v) %in% c(ids,db$attribute$name))) |> melt(id.vars=ids) |> mutate(attribute_name=variable,attrvalue=value) |> select(-variable,-value)
+##
+va <- db$attribute |> mutate(attribute_id=ID,attribute_name=name) |> select(attribute_id,attribute_name,variable_name) |> right_join(va) ##|> select(-variable)
+##
+va <- db$variable |> mutate(variable_id=ID,variable_name=name) |> select(variable_id,variable_name) |> right_join(va) |> select(-variable_name)
+##
+###
+vv <- full_join(vv,va)
+vv$action_id <- action_id
+vv$ID <- nrow(db0$ts)+1:nrow(vv)
+nts <- names(db$ts)
+vv <- vv[,..nts]
+###
+db$ts <- rbind(db$ts,vv)
+tail(db$ts,n=20)
+
+## ----echo=TRUE, results='asis'------------------------------------------------
+##
+db1 <- db
+##
+country <- "Morocco"
+years <- 1900:2026
+project_name <- sprintf("ssod_%s",country)
+action_description <- sprintf("%s_%s",country,paste(range(years),collapse="_"))
+### new project
+project_id <- nrow(db1$project)+1
+db$project <- rbind(db1$project, data.table::data.table(ID = project_id, name = project_name))
+### new action
+action_id <- nrow(db1$action)+1
+operator_id <- 1
+new_action <- data.table::data.table(ID=action_id,description=action_description,timestamptz=Sys.time(),operator_id=operator_id,project_id=project_id)
+db$action <- rbind(db$action,new_action)
+
+## ----echo=TRUE,results='asis'-------------------------------------------------
+## ---------------------------------------------------------------------------
+## R script: download SSOD v2 data for ALL available Morocco weather
+## stations, years 2000-2026, using link #1 ("by-year" access point)
+##
+##   https://www.ncei.noaa.gov/oa/synoptic-summary-of-the-day/v2/access/by-year/
+##
+## Morocco's FIPS country code in this dataset is "MO" (confirmed against
+## Moroccan airport ICAO codes present in the bucket, e.g. "GMMN" =
+## Mohammed V Intl, Casablanca).
+##
+## The list of Moroccan stations is NOT hardcoded: for every year, the
+## script queries the underlying S3-compatible ListObjectsV2 endpoint
+## with prefix "v2/access/by-year/<year>/csv/SSOD_MO" and downloads
+## whatever station files come back. This automatically adapts to
+## stations being added or dropped over time (verified: 25 Moroccan
+## stations in 2000 vs. 31 in 2020 - the station list does change).
+##
+## NOTE: this script makes one listing request + several dozen file
+## downloads PER YEAR, so downloading the full 2000-2026 range can take
+## a while and will create several hundred small CSV files locally.
+## ---------------------------------------------------------------------------
+pkgs <- c("httr", "xml2")
+to_install <- pkgs[!sapply(pkgs, requireNamespace, quietly = TRUE)]
+if (length(to_install) > 0) install.packages(to_install)
+library(httr)
+library(xml2)
+library(countrycode)
+# --- parameters: change these to target a different country/year range ----
+country_prefix <- countrycode::countrycode(country, "country.name", "fips")       # Morocco FIPS country code
+
+pause_seconds  <- 0.1         # small delay between downloads, be nice to the server
+base_url <- "https://www.ncei.noaa.gov/oa/synoptic-summary-of-the-day/"
+###dir.create("ssod_data", showWarnings = FALSE)
+#' List every SSOD "by-year" file key for a given year and country prefix
+#' (handles pagination, in case a country ever has more than 1000 stations)
+list_country_files_for_year <- function(year, country_prefix) {
+  prefix <- sprintf("v2/access/by-year/%d/csv/SSOD_%s", year, country_prefix)
+  keys <- character()
+  token <- NULL
+  repeat {
+    query <- list(`list-type` = "2", prefix = prefix)
+    if (!is.null(token)) query$`continuation-token` <- token
+    resp <- GET(base_url, query = query)
+    stop_for_status(resp)
+    doc <- read_xml(content(resp, as = "text", encoding = "UTF-8"))
+    xml_ns_strip(doc)   # strip the S3 namespace to simplify XPath queries
+    found <- xml_text(xml_find_all(doc, ".//Contents/Key"))
+    keys <- c(keys, found)
+    is_truncated <- xml_text(xml_find_first(doc, ".//IsTruncated"))
+    if (identical(is_truncated, "true")) {
+      token <- xml_text(xml_find_first(doc, ".//NextContinuationToken"))
+    } else {
+      break
+    }
+  }
+  keys
+}
+#' Download one file (S3 key) into ssod_data/<year>/<filename>.csv and
+#' read it into a data.frame; returns NULL (with a warning) on failure
+download_one <- function(key, year,wpath,overwrite=FALSE) {
+  file_url <- paste0(base_url, key)
+  dest_dir <- file.path(wpath,"/ssod_data", year)
+  dir.create(dest_dir, showWarnings = FALSE, recursive = TRUE)
+  dest_file <- file.path(dest_dir, basename(key))
+  if ((!file.exists(dest_file)) | overwrite) {
+  resp <- tryCatch(GET(file_url), error = function(e) NULL)
+  if (is.null(resp) || http_error(resp)) {
+    warning(sprintf("Failed to download %s - skipping", key))
+    return(NULL)
+  }
+  writeBin(content(resp, as = "raw"), dest_file)
+  }
+  tryCatch(read.csv(dest_file, stringsAsFactors = FALSE),
+           error = function(e) {
+             warning(sprintf("Failed to parse %s - skipping", key))
+             NULL
+           })
+}
+#' rbind a list of data.frames whose columns may not perfectly match
+#' across years (missing columns are filled with NA)
+rbind_fill <- function(df_list) {
+  df_list <- Filter(Negate(is.null), df_list)
+  if (length(df_list) == 0) return(data.frame())
+  all_cols <- unique(unlist(lapply(df_list, names)))
+  df_list <- lapply(df_list, function(df) {
+    missing_cols <- setdiff(all_cols, names(df))
+    for (col in missing_cols) df[[col]] <- NA
+    df[all_cols]
+  })
+  do.call(rbind, df_list)
+}
+# --- main loop: discover + download every Morocco station, every year -----
+all_data        <- list()
+station_summary <- data.frame(year = integer(), n_stations = integer())
+wpath <- "/home/ecor/local/data/climate/ssod"
+for (year in years) {
+  cat("\n==== Year", year, "====\n")
+  keys <- list_country_files_for_year(year, country_prefix)
+  cat("Found", length(keys), "country station file(s)\n")
+  station_summary <- rbind(station_summary,
+                            data.frame(year = year, n_stations = length(keys)))
+  for (key in keys) {
+    cat("  Downloading:", basename(key), "\n")
+    df <- download_one(key, year,wpath)
+    if (!is.null(df)) {
+      all_data[[length(all_data) + 1]] <- df
+    }
+    if (pause_seconds > 0) Sys.sleep(pause_seconds)
+  }
+}
+# --- combine everything into one data.frame ---------------------------------
+combined <- rbind_fill(all_data)
+combined[combined==-9999.9] <- NA
+cat("\n---------------------------------------------\n")
+cat("Years processed:", paste(range(years), collapse = "-"), "\n")
+cat("Total rows downloaded across all stations/years:", nrow(combined), "\n")
+cat("\nNumber of Morocco stations found per year:\n")
+print(station_summary)
+
+## ----echo=TRUE,results='asis'-------------------------------------------------
+# Lookup table mapping the `combined` data frame's column names
+# to the standard NOAA GSOD/SSOD field names and their meaning
+gsod_lookup <- data.frame(
+  combined_column = c(
+    "STATION",
+    "Station_name",
+    "DATE",
+    "Year",
+    "Month",
+    "Day",
+    "LATITUDE",
+    "LONGITUDE",
+    "ELEVATION",
+    "mean_temperature",
+    "mean_temperature_Measurement_Code",
+    "mean_dew_point_temperature",
+    "mean_dew_point_temperature_Measurement_Code",
+    "mean_sea_level_pressure",
+    "mean_sea_level_pressure_Measurement_Code",
+    "mean_station_level_pressure",
+    "mean_station_level_pressure_Measurement_Code",
+    "mean_visibility",
+    "mean_visibility_Measurement_Code",
+    "mean_wind_speed",
+    "mean_wind_speed_Measurement_Code",
+    "max_wind_speed",
+    "max_wind_gust",
+    "max_temperature",
+    "max_temperature_Measurement_Code",
+    "min_temperature",
+    "min_temperature_Measurement_Code",
+    "total_precipitation",
+    "total_precipitation_Measurement_Code",
+    "snow_depth",
+    "observed_pres_wx"
+  ),
+  gsod_field = c(
+    "STATION",
+    "NAME",
+    "DATE",
+    NA,                    # derived from DATE, not a raw GSOD field
+    NA,                    # derived from DATE, not a raw GSOD field
+    NA,                    # derived from DATE, not a raw GSOD field
+    "LATITUDE",
+    "LONGITUDE",
+    "ELEVATION",
+    "TEMP",
+    "TEMP_ATTRIBUTES",
+    "DEWP",
+    "DEWP_ATTRIBUTES",
+    "SLP",
+    "SLP_ATTRIBUTES",
+    "STP",
+    "STP_ATTRIBUTES",
+    "VISIB",
+    "VISIB_ATTRIBUTES",
+    "WDSP",
+    "WDSP_ATTRIBUTES",
+    "MXSPD",
+    "GUST",
+    "MAX",
+    "MAX_ATTRIBUTES",
+    "MIN",
+    "MIN_ATTRIBUTES",
+    "PRCP",
+    "PRCP_ATTRIBUTES",
+    "SNDP",
+    "FRSHTT"
+  ),
+  description = c(
+    "Station identifier (USAF+WBAN)",
+    "Station name",
+    "Observation date",
+    "Year (derived from DATE)",
+    "Month (derived from DATE)",
+    "Day (derived from DATE)",
+    "Station latitude, decimal degrees",
+    "Station longitude, decimal degrees",
+    "Station elevation, meters",
+    "Daily mean temperature",
+    "Number of hourly obs (0-24) used for the mean temperature",
+    "Daily mean dew point temperature",
+    "Number of hourly obs (0-24) used for the mean dew point",
+    "Daily mean sea-level pressure",
+    "Number of hourly obs (0-24) used for the mean SLP",
+    "Daily mean station-level pressure",
+    "Number of hourly obs (0-24) used for the mean STP",
+    "Daily mean visibility",
+    "Number of hourly obs (0-24) used for the mean visibility",
+    "Daily mean wind speed",
+    "Number of hourly obs (0-24) used for the mean wind speed",
+    "Maximum sustained wind speed (no attribute field)",
+    "Maximum wind gust (no attribute field)",
+    "Daily maximum temperature",
+    "Flag: blank = reported synoptic max, '*' = derived from hourly TEMP",
+    "Daily minimum temperature",
+    "Flag: blank = reported synoptic min, '*' = derived from hourly TEMP",
+    "Daily total precipitation",
+    "Flag A-I: accumulation basis (6h/12h/24h reports, or 'I' = no data)",
+    "Snow depth (no attribute field)",
+    "6-digit FRSHTT occurrence flag: Fog/Rain-Drizzle/Snow-Ice/Hail/Thunder/Tornado"
+  ),
+  stringsAsFactors = FALSE
+)
+inn <- which(!is.na(gsod_lookup$gsod_field))
+combined2 <- combined[,inn]
+weather_ts_data <- combined2
+names(weather_ts_data) <- gsod_lookup$gsod_field[inn]
+
+## ----echo=TRUE, results='asis', fig.show='hold', fig.width=10, fig.height=6, out.width='100%'----
+library(terra)
+library(sf)
+library(countrycode)
+weather_ts_data$DATE <- as.Date(as.character(weather_ts_data$DATE))
+## one row per station: coordinates/metadata (assumed constant per station)
+## plus the observed date range for this station in this download
+p <- weather_ts_data |>
+  dplyr::group_by(STATION) |>
+  dplyr::summarise(
+    NAME      = dplyr::first(NAME),
+    LATITUDE  = dplyr::first(LATITUDE),
+    LONGITUDE = dplyr::first(LONGITUDE),
+    ELEVATION = dplyr::first(ELEVATION),
+    BEGIN     = min(DATE, na.rm = TRUE),
+    END       = max(DATE, na.rm = TRUE),
+    .groups   = "drop"
+  ) |>
+  dplyr::rename(STNID = STATION) |>
+  dplyr::filter(!duplicated(STNID)) |>
+  as.data.frame()
+## SSOD rows don't carry per-station CTRY/COUNTRY_NAME/ISO2C/ISO3C the way
+## GSODR does; since this download targeted a single country, fill them in
+p$CTRY         <- country_prefix
+p$COUNTRY_NAME <- country
+p$ISO2C        <- countrycode::countrycode(country, "country.name", "iso2c")
+p$ISO3C        <- countrycode::countrycode(country, "country.name", "iso3c")
+p$STATE        <- as.character(NA)
+prefix <- "SSOD station: data through NCEI Synoptic Summary of the Day v2"
+p$description <- purrr::pmap_chr(
+  p[, c("STNID", "NAME", "CTRY", "COUNTRY_NAME", "ISO2C", "ISO3C", "STATE",
+        "LATITUDE", "LONGITUDE", "ELEVATION", "BEGIN", "END")],
+  function(...) {
+    row <- list(...)
+    paste(c(prefix, paste(names(row), row, sep = " : ")), collapse = " ; ")
+  }
+)
+p <- sf::st_as_sf(
+  p,
+  coords = c("LONGITUDE", "LATITUDE"),
+  crs = st_crs(db$p),
+  remove = FALSE
+)
+####
+p$name2 <- sprintf("SSOD_%s (%s - %s)", p$STNID, p$NAME, p$ISO2C)
+## assumes a "ssod" row already exists in db$provider (as "gsod" does);
+## created here if missing so the lookup below never returns NA
+if (!("ssod" %in% db$provider$name)) {
+  db$provider <- rbind(
+    db$provider,
+    data.table::data.table(ID = nrow(db$provider) + 1, name = "ssod")
+  )
+}
+p$provider_id <- db$provider$ID[db$provider$name == "ssod"]
+p$ID <- nrow(db1$p) + 1:nrow(p)
+db$p <- rbind(db1$p, p[, names(db1$p)])
+plet(vect(db$p), cex = 20)
+
+## ----echo=TRUE, results='asis'------------------------------------------------
+new_variable_names <- c("SNDP", "FRSHTT")
+new_variable_names <- setdiff(new_variable_names, db$variable$name)
+if (length(new_variable_names) > 0) {
+  new_variables <- data.table::data.table(
+    ID          = nrow(db$variable) + seq_along(new_variable_names),
+    name        = new_variable_names,
+    description = gsod_lookup$description[match(new_variable_names, gsod_lookup$gsod_field)],
+    provider_id = db$provider$ID[db$provider$name == "gsod"]
+  )
+  ## fill = TRUE: safely adds the rows even if db$variable carries extra
+  ## columns beyond ID/name/description/provider_id, leaving those NA here
+  ## rather than guessing at a schema that isn't shown in this vignette
+  db$variable <- rbind(db$variable, new_variables, fill = TRUE)
+}
+tail(db$variable)
+
+## ----echo=TRUE, results='asis'------------------------------------------------
+library(dplyr)
+v <- weather_ts_data
+v$timestamptz <- as.POSIXct(v$DATE, tz = "GMT")
+## match rows to their station by STNID/STATION, restricted to the ssod
+## provider (weather_ts_data has no ISO2C/name2 to join on, unlike GSOD)
+vp <- db$p |> as.data.table() |>
+  dplyr::filter(provider_id == db$provider$ID[db$provider$name == "ssod"]) |>
+  dplyr::mutate(p_id = ID) 
+prefix <- "SSOD_"
+lpp <- str_length(prefix)
+vp$code <- str_split(vp$name2,"[ (]") |> sapply(FUN=function(x){x[[1]]}) 
+v$code <- paste0(prefix,v$STATION)
+
+
+#|>
+#  dplyr::select(p_id, STNID)
+v <- dplyr::left_join(v, vp) ###, by = c("STATION" = "STNID"))
+ids <- c("timestamptz","p_id")
+vv <- v  |> dplyr::select(which(names(v) %in% c(ids,db$variable$name))) |> as.data.table() |>  melt(id.vars=ids)
+vv <- db$variable |> mutate(variable_id=ID,variable=name) |> select(variable_id,variable) |> right_join(vv) |> select(-variable)
+va <- v  |> dplyr::select(which(names(v) %in% c(ids,db$attribute$name))) |> as.data.table() |> melt(id.vars=ids) |> mutate(attribute_name=variable,attrvalue=value) |> select(-variable,-value)
+##
+va <- db$attribute |> mutate(attribute_id=ID,attribute_name=name) |> select(attribute_id,attribute_name,variable_name) |> right_join(va) ##|> select(-variable)
+##
+va <- db$variable |> mutate(variable_id=ID,variable_name=name) |> select(variable_id,variable_name) |> right_join(va) |> select(-variable_name)
+##
+###
+vv <- full_join(vv,va)
+vv$action_id <- action_id
+vv$ID <- nrow(db1$ts)+1:nrow(vv)
+nts <- names(db$ts)
+vv <- vv[,..nts]
+###
+db$ts <- rbind(db$ts,vv)
+tail(db$ts,n=20)
+
+## ----echo=TRUE, message=FALSE, warning=FALSE,fig.width=100--------------------
+library(leaflet)
+library(plotly)
+library(crosstalk)
+library(dplyr)
+
+max_stations <- 1 #
+
+## PRCP time series for every station just added from GSOD, so we can
+## pick the `max_stations` that actually HAVE precipitation data
+## (some GSOD stations report no PRCP at all, which is why a naive
+## "first 15 by ID" pick can end up with empty/invisible lines)
+prcp_all <- get_ts(
+  x = db,
+  p_id = unique(p$ID),
+  get_variable_args = list(name = "PRCP")
+) |>
+  dplyr::filter(!is.na(value))
+
+demo_ids <- prcp_all |>
+  dplyr::count(p_id, name = "n_obs") |>
+  dplyr::arrange(dplyr::desc(n_obs)) |>
+  dplyr::slice_head(n = max_stations) |>
+  dplyr::pull(p_id)
+
+prcp <- prcp_all |> dplyr::filter(p_id %in% demo_ids)
+
+## Attach a human-readable station label (character keys, to avoid a
+## silent numeric/character join mismatch dropping the match)
+station_lookup <- sf::st_drop_geometry(db$p)[, c("ID", "name2")]
+station_lookup$ID <- as.character(station_lookup$ID)
+prcp$p_id <- as.character(prcp$p_id)
+
+prcp <- prcp |> dplyr::left_join(station_lookup, by = c("p_id" = "ID"))
+
+stations_sf <- db$p[as.character(db$p$ID) %in% as.character(demo_ids), ]
+stations_sf$id_chr <- as.character(stations_sf$ID)
+
+## One color per station (by name), reused for both the map marker
+## and its matching PRCP line
+station_colors <- grDevices::hcl.colors(length(unique(stations_sf$name2)), palette = "Dark 3")
+names(station_colors) <- unique(stations_sf$name2)
+stations_sf$color <- station_colors[stations_sf$name2]
+
+## A shared crosstalk key (station ID, as character on both sides) links
+## the map and the chart
+sd_stations <- crosstalk::SharedData$new(stations_sf, key = ~id_chr, group = "prcp_explorer")
+sd_prcp     <- crosstalk::SharedData$new(prcp,        key = ~p_id,   group = "prcp_explorer")
+
+station_map <- leaflet::leaflet(sd_stations, height = 450) |>
+  leaflet::addProviderTiles(leaflet::providers$OpenTopoMap) |>
+  leaflet::addCircleMarkers(
+    radius = 7, stroke = TRUE, color = "#333333", weight = 1,
+    fillColor = ~color, fillOpacity = 0.9,
+    label = ~name2
+  )
+
+ts_plot <- plotly::plot_ly(
+  sd_prcp,
+  x = ~timestamptz, y = ~value,
+  color = ~name2, colors = station_colors,
+  height = 450,
+  hoverinfo = "text",
+  text = ~sprintf("%s<br>%s: %.1f mm", name2, format(timestamptz, "%Y-%m-%d"), value)
+) |>
+  plotly::add_lines(line = list(width = 1)) |>
+  plotly::layout(
+    showlegend = FALSE,
+    xaxis = list(title = "", rangeslider = list(visible = TRUE)),
+    yaxis = list(title = "PRCP (mm)")
+  ) |>
+  plotly::highlight(
+    on = "plotly_click", off = "plotly_doubleclick",
+    opacityDim = 0.05, selectize = FALSE, persistent = FALSE
+  )
+
+crosstalk::bscols(widths = c(5, 7), station_map, ts_plot)
+

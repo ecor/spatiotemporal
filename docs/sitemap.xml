@@ -2,10 +2,15 @@
 <url><loc>/404.html</loc></url>
 <url><loc>/LICENSE-text.html</loc></url>
 <url><loc>/articles/db_schema.html</loc></url>
+<url><loc>/articles/db_schema_with_ghcn.html</loc></url>
+<url><loc>/articles/exporting_db_to_ems_xls_files.html</loc></url>
 <url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/spatiotemporal-db-schema_ssod_va.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/reference/db.html</loc></url>
+<url><loc>/reference/get_action.html</loc></url>
+<url><loc>/reference/get_attribute.html</loc></url>
 <url><loc>/reference/get_attributes.html</loc></url>
 <url><loc>/reference/get_operators.html</loc></url>
 <url><loc>/reference/get_p.html</loc></url>

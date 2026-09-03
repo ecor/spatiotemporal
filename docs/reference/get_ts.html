@@ -32,7 +32,16 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/db_schema_with_ghcn.html">Spatiotemporal DB schema</a>
+    </li>
+    <li>
       <a href="../articles/db_schema.html">Spatiotemporal DB schema</a>
+    </li>
+    <li>
+      <a href="../articles/exporting_db_to_ems_xls_files.html">Spatiotemporal DB schema</a>
+    </li>
+    <li>
+      <a href="../articles/spatiotemporal-db-schema_ssod_va.html">Spatiotemporal DB schema</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -59,8 +68,12 @@
 <span>  ts_table_name <span class="op">=</span> <span class="st">"ts"</span>,</span>
 <span>  get_p_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  get_variable_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  get_attribute_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  get_action_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  p_id <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  variable_id <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  attribute_id <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  action_id <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  timestep <span class="op">=</span> <span class="fl">24</span> <span class="op">*</span> <span class="fl">3600</span>,</span>
 <span>  regular_timestamptz <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -87,12 +100,28 @@
 <dd><p>list of possible arguments for <code><a href="get_variable.html">get_variable</a></code></p></dd>
 
 
+<dt id="arg-get-attribute-args">get_attribute_args<a class="anchor" aria-label="anchor" href="#arg-get-attribute-args"></a></dt>
+<dd><p>list of possible arguments for <code><a href="get_attribute.html">get_attribute</a></code></p></dd>
+
+
+<dt id="arg-get-action-args">get_action_args<a class="anchor" aria-label="anchor" href="#arg-get-action-args"></a></dt>
+<dd><p>list of possible arguments for <code><a href="get_action.html">get_action</a></code></p></dd>
+
+
 <dt id="arg-p-id">p_id<a class="anchor" aria-label="anchor" href="#arg-p-id"></a></dt>
 <dd><p>id number for <code>p</code> table</p></dd>
 
 
 <dt id="arg-variable-id">variable_id<a class="anchor" aria-label="anchor" href="#arg-variable-id"></a></dt>
 <dd><p>id number for <code>variable</code> table</p></dd>
+
+
+<dt id="arg-attribute-id">attribute_id<a class="anchor" aria-label="anchor" href="#arg-attribute-id"></a></dt>
+<dd><p>id number for <code>attribute</code> table</p></dd>
+
+
+<dt id="arg-action-id">action_id<a class="anchor" aria-label="anchor" href="#arg-action-id"></a></dt>
+<dd><p>id number for <code>action</code> table</p></dd>
 
 
 <dt id="arg-timestep">timestep<a class="anchor" aria-label="anchor" href="#arg-timestep"></a></dt>
@@ -113,10 +142,192 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_p.html">get_p</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">db</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 122 features and 4 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 12.352 ymin: -17.8 xmax: 40.182 ymax: 3.235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    ID                                   name2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1         GSOD_637560-99999 (MWANZA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2          GSOD_637900-99999 (MOSHI - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3         GSOD_638010-99999 (KIGOMA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4           GSOD_638160-99999 (SAME - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5          GSOD_638180-99999 (MOMBO - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6 GSOD_638320-99999 (TABORA AIRPORT - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7          GSOD_638440-99999 (TANGA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8         GSOD_638620-99999 (DODOMA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 GSOD_638660-99999 (MOROGORO (MET) - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10       GSOD_638700-99999 (ZANZIBAR - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                       description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       GSOD station: data through GSODR R package , STNID : 637560-99999  , NAME : MWANZA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -2.444  , LONGITUDE : 32.933  , ELEVATION : 1146.96  , BEGIN : 19500108  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2             GSOD station: data through GSODR R package , STNID : 637900-99999  , NAME : MOSHI  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -3.35  , LONGITUDE : 37.333  , ELEVATION : 831  , BEGIN : 19490909  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           GSOD station: data through GSODR R package , STNID : 638010-99999  , NAME : KIGOMA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.883  , LONGITUDE : 29.633  , ELEVATION : 885  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4             GSOD station: data through GSODR R package , STNID : 638160-99999  , NAME : SAME  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.083  , LONGITUDE : 37.717  , ELEVATION : 872  , BEGIN : 19570101  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            GSOD station: data through GSODR R package , STNID : 638180-99999  , NAME : MOMBO  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.883  , LONGITUDE : 38.283  , ELEVATION : 511  , BEGIN : 19580206  , END : 20201120 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  GSOD station: data through GSODR R package , STNID : 638320-99999  , NAME : TABORA AIRPORT  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -5.083  , LONGITUDE : 32.833  , ELEVATION : 1190  , BEGIN : 19490121  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          GSOD station: data through GSODR R package , STNID : 638440-99999  , NAME : TANGA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -5.092  , LONGITUDE : 39.071  , ELEVATION : 39.31  , BEGIN : 19570101  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        GSOD station: data through GSODR R package , STNID : 638620-99999  , NAME : DODOMA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.17  , LONGITUDE : 35.753  , ELEVATION : 1119.53  , BEGIN : 19500207  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    GSOD station: data through GSODR R package , STNID : 638660-99999  , NAME : MOROGORO (MET)  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.833  , LONGITUDE : 37.65  , ELEVATION : 526  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      GSOD station: data through GSODR R package , STNID : 638700-99999  , NAME : ZANZIBAR  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.222  , LONGITUDE : 39.225  , ELEVATION : 16.45  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    provider_id              geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            2 POINT (32.933 -2.444)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            2  POINT (37.333 -3.35)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            2 POINT (29.633 -4.883)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            2 POINT (37.717 -4.083)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            2 POINT (38.283 -4.883)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            2 POINT (32.833 -5.083)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            2 POINT (39.071 -5.092)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            2  POINT (35.753 -6.17)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            2  POINT (37.65 -6.833)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           2 POINT (39.225 -6.222)</span>
 <span class="r-in"><span><span class="va">px</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[</span><span class="fl">49</span>,<span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">st_buffer</a></span><span class="op">(</span>dist<span class="op">=</span><span class="fl">250</span><span class="op">*</span><span class="fl">1000</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">get_ts</span><span class="op">(</span>x<span class="op">=</span><span class="va">db</span>,get_p_args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p<span class="op">=</span><span class="va">px</span><span class="op">)</span>,get_variable_args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MIN"</span>,<span class="st">"MAX"</span>,<span class="st">"PRCP"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 122 features and 4 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 12.352 ymin: -17.8 xmax: 40.182 ymax: 3.235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    ID                                   name2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1         GSOD_637560-99999 (MWANZA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2          GSOD_637900-99999 (MOSHI - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3         GSOD_638010-99999 (KIGOMA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4           GSOD_638160-99999 (SAME - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5          GSOD_638180-99999 (MOMBO - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6 GSOD_638320-99999 (TABORA AIRPORT - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7          GSOD_638440-99999 (TANGA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8         GSOD_638620-99999 (DODOMA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 GSOD_638660-99999 (MOROGORO (MET) - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10       GSOD_638700-99999 (ZANZIBAR - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                       description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       GSOD station: data through GSODR R package , STNID : 637560-99999  , NAME : MWANZA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -2.444  , LONGITUDE : 32.933  , ELEVATION : 1146.96  , BEGIN : 19500108  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2             GSOD station: data through GSODR R package , STNID : 637900-99999  , NAME : MOSHI  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -3.35  , LONGITUDE : 37.333  , ELEVATION : 831  , BEGIN : 19490909  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           GSOD station: data through GSODR R package , STNID : 638010-99999  , NAME : KIGOMA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.883  , LONGITUDE : 29.633  , ELEVATION : 885  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4             GSOD station: data through GSODR R package , STNID : 638160-99999  , NAME : SAME  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.083  , LONGITUDE : 37.717  , ELEVATION : 872  , BEGIN : 19570101  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            GSOD station: data through GSODR R package , STNID : 638180-99999  , NAME : MOMBO  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.883  , LONGITUDE : 38.283  , ELEVATION : 511  , BEGIN : 19580206  , END : 20201120 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  GSOD station: data through GSODR R package , STNID : 638320-99999  , NAME : TABORA AIRPORT  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -5.083  , LONGITUDE : 32.833  , ELEVATION : 1190  , BEGIN : 19490121  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          GSOD station: data through GSODR R package , STNID : 638440-99999  , NAME : TANGA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -5.092  , LONGITUDE : 39.071  , ELEVATION : 39.31  , BEGIN : 19570101  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        GSOD station: data through GSODR R package , STNID : 638620-99999  , NAME : DODOMA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.17  , LONGITUDE : 35.753  , ELEVATION : 1119.53  , BEGIN : 19500207  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    GSOD station: data through GSODR R package , STNID : 638660-99999  , NAME : MOROGORO (MET)  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.833  , LONGITUDE : 37.65  , ELEVATION : 526  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      GSOD station: data through GSODR R package , STNID : 638700-99999  , NAME : ZANZIBAR  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.222  , LONGITUDE : 39.225  , ELEVATION : 16.45  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    provider_id              geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            2 POINT (32.933 -2.444)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            2  POINT (37.333 -3.35)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            2 POINT (29.633 -4.883)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            2 POINT (37.717 -4.083)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            2 POINT (38.283 -4.883)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            2 POINT (32.833 -5.083)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            2 POINT (39.071 -5.092)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            2  POINT (35.753 -6.17)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            2  POINT (37.65 -6.833)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           2 POINT (39.225 -6.222)</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>attribute variables are assumed to be spatially constant throughout all geometries</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ID             name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1             TEMP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     2             DEWP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     3              SLP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     4              STP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     5            VISIB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     6             WDSP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     7            MXSPD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     8             GUST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     9              MAX</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    10              MIN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    11             PRCP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    12             SNDP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    13            I_FOG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    14   I_RAIN_DRIZZLE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    15       I_SNOW_ICE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:    16           I_HAIL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:    17        I_THUNDER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:    18 I_TORNADO_FUNNEL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:    19               EA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:    20               ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:    21               RH</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ID             name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                  description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                                                                                                                                                                                                                    Mean daily temperature converted to degrees C to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:                                                                                                                                                                                                                                      Mean daily dew point converted to degrees C to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                                                                                                                                                                                                             Mean sea level pressure in millibars to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                                                                                                                                                                                                   Mean station pressure for the day in millibars to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                                                                                                                                                                                              Mean visibility for the day converted to kilometres to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                                                                                                                                                                                           Mean daily wind speed value converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                                                                                                                                                                     Maximum sustained wind speed reported for the day converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                                                                                                                                                                                Maximum wind gust reported for the day converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                                                                                Maximum temperature reported during the day converted to Celsius to tenths–time of max temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                                                                                Minimum temperature reported during the day converted to Celsius to tenths–time of min temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: Total precipitation (rain and/or melted snow) reported during the day converted to millimetres to hundredths; will usually not end with the midnight observation, i.e., may include latter part of previous day. A value of “.00” indicates no measurable precipitation (includes a trace). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                                                                                                                                                                                                        Snow depth in millimetres to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                                                                                                                                                                                                                      Indicator for fog, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                                                                                                                                                                                                          Indicator for rain or drizzle, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                                                                                                                                                                                                      Indicator for snow or ice pellets, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:                                                                                                                                                                                                                     Indicator for hail, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:                                                                                                                                                                                                                  Indicator for thunder, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:                                                                                                                                                                                                  Indicator for tornado or funnel cloud, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:                                                                                                                                                              Mean daily actual vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                                                                                                                                                          Mean daily saturation vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:                                                                                                                                                                   Mean daily relative humidity as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                  description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     provider_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     provider_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "name %in% c('MIN','MAX','PRCP')"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               ID attribute_id variable_id timestamptz  p_id value attrvalue</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;int&gt;        &lt;int&gt;       &lt;int&gt;      &lt;POSc&gt; &lt;int&gt; &lt;num&gt;    &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       1:       1            1           1  1960-03-01    24  22.5         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       2:       2            1           1  1960-03-02    24  20.6         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       3:       3            1           1  1960-03-03    24  18.3         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       4:       4            1           1  1960-03-04    24  22.4         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       5:       5            1           1  1960-03-05    24  23.1         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ---                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579547: 7579547           NA          21  2024-03-12    21  73.6      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579548: 7579548           NA          21  2024-04-08    21  66.8      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579549: 7579549           NA          21  2024-08-16    21  76.2      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579550: 7579550           NA          21  2024-09-03    21  64.2      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579551: 7579551           NA          21  2024-10-01    21  67.0      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          action_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       1:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       2:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       3:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       4:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       5:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ---          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579547:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579548:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579549:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579550:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579551:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "p_id %in% c(3,21,44,49,50,54,85,87,90,91,92,93)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "variable_id %in% c(9,10,11)"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Precipitation in one site</span></span></span>
 <span class="r-in"><span></span></span>
@@ -124,8 +335,151 @@
 <span class="r-in"><span><span class="va">prcp</span> <span class="op">&lt;-</span> <span class="fu">get_ts</span><span class="op">(</span>x<span class="op">=</span><span class="va">db</span>,get_p_args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>p<span class="op">=</span><span class="va">px</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  get_variable_args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PRCP"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  regular_timestamptz<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 122 features and 4 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 12.352 ymin: -17.8 xmax: 40.182 ymax: 3.235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    ID                                   name2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1         GSOD_637560-99999 (MWANZA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2          GSOD_637900-99999 (MOSHI - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3         GSOD_638010-99999 (KIGOMA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4           GSOD_638160-99999 (SAME - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5          GSOD_638180-99999 (MOMBO - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6 GSOD_638320-99999 (TABORA AIRPORT - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7          GSOD_638440-99999 (TANGA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8         GSOD_638620-99999 (DODOMA - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 GSOD_638660-99999 (MOROGORO (MET) - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10       GSOD_638700-99999 (ZANZIBAR - TZ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                       description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       GSOD station: data through GSODR R package , STNID : 637560-99999  , NAME : MWANZA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -2.444  , LONGITUDE : 32.933  , ELEVATION : 1146.96  , BEGIN : 19500108  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2             GSOD station: data through GSODR R package , STNID : 637900-99999  , NAME : MOSHI  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -3.35  , LONGITUDE : 37.333  , ELEVATION : 831  , BEGIN : 19490909  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           GSOD station: data through GSODR R package , STNID : 638010-99999  , NAME : KIGOMA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.883  , LONGITUDE : 29.633  , ELEVATION : 885  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4             GSOD station: data through GSODR R package , STNID : 638160-99999  , NAME : SAME  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.083  , LONGITUDE : 37.717  , ELEVATION : 872  , BEGIN : 19570101  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            GSOD station: data through GSODR R package , STNID : 638180-99999  , NAME : MOMBO  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -4.883  , LONGITUDE : 38.283  , ELEVATION : 511  , BEGIN : 19580206  , END : 20201120 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  GSOD station: data through GSODR R package , STNID : 638320-99999  , NAME : TABORA AIRPORT  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -5.083  , LONGITUDE : 32.833  , ELEVATION : 1190  , BEGIN : 19490121  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          GSOD station: data through GSODR R package , STNID : 638440-99999  , NAME : TANGA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -5.092  , LONGITUDE : 39.071  , ELEVATION : 39.31  , BEGIN : 19570101  , END : 20230812 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        GSOD station: data through GSODR R package , STNID : 638620-99999  , NAME : DODOMA  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.17  , LONGITUDE : 35.753  , ELEVATION : 1119.53  , BEGIN : 19500207  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    GSOD station: data through GSODR R package , STNID : 638660-99999  , NAME : MOROGORO (MET)  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.833  , LONGITUDE : 37.65  , ELEVATION : 526  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      GSOD station: data through GSODR R package , STNID : 638700-99999  , NAME : ZANZIBAR  , CTRY : TZ  , COUNTRY : TANZANIA  , ISO2C : TZ  , ISO3C : TZA  , STATE : NA  , LATITUDE : -6.222  , LONGITUDE : 39.225  , ELEVATION : 16.45  , BEGIN : 19570101  , END : 20230819 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    provider_id              geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            2 POINT (32.933 -2.444)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            2  POINT (37.333 -3.35)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            2 POINT (29.633 -4.883)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            2 POINT (37.717 -4.083)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            2 POINT (38.283 -4.883)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            2 POINT (32.833 -5.083)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            2 POINT (39.071 -5.092)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            2  POINT (35.753 -6.17)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            2  POINT (37.65 -6.833)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           2 POINT (39.225 -6.222)</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>attribute variables are assumed to be spatially constant throughout all geometries</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ID             name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1             TEMP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     2             DEWP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     3              SLP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     4              STP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     5            VISIB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     6             WDSP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     7            MXSPD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     8             GUST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     9              MAX</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    10              MIN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    11             PRCP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    12             SNDP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    13            I_FOG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    14   I_RAIN_DRIZZLE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    15       I_SNOW_ICE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:    16           I_HAIL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:    17        I_THUNDER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:    18 I_TORNADO_FUNNEL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:    19               EA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:    20               ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:    21               RH</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ID             name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                  description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                                                                                                                                                                                                                    Mean daily temperature converted to degrees C to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:                                                                                                                                                                                                                                      Mean daily dew point converted to degrees C to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                                                                                                                                                                                                             Mean sea level pressure in millibars to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                                                                                                                                                                                                   Mean station pressure for the day in millibars to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                                                                                                                                                                                              Mean visibility for the day converted to kilometres to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                                                                                                                                                                                           Mean daily wind speed value converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                                                                                                                                                                     Maximum sustained wind speed reported for the day converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                                                                                                                                                                                Maximum wind gust reported for the day converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                                                                                Maximum temperature reported during the day converted to Celsius to tenths–time of max temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                                                                                Minimum temperature reported during the day converted to Celsius to tenths–time of min temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: Total precipitation (rain and/or melted snow) reported during the day converted to millimetres to hundredths; will usually not end with the midnight observation, i.e., may include latter part of previous day. A value of “.00” indicates no measurable precipitation (includes a trace). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                                                                                                                                                                                                        Snow depth in millimetres to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                                                                                                                                                                                                                      Indicator for fog, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                                                                                                                                                                                                          Indicator for rain or drizzle, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                                                                                                                                                                                                      Indicator for snow or ice pellets, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:                                                                                                                                                                                                                     Indicator for hail, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:                                                                                                                                                                                                                  Indicator for thunder, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:                                                                                                                                                                                                  Indicator for tornado or funnel cloud, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:                                                                                                                                                              Mean daily actual vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                                                                                                                                                          Mean daily saturation vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:                                                                                                                                                                   Mean daily relative humidity as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                  description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     provider_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     provider_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "name %in% c('PRCP')"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               ID attribute_id variable_id timestamptz  p_id value attrvalue</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;int&gt;        &lt;int&gt;       &lt;int&gt;      &lt;POSc&gt; &lt;int&gt; &lt;num&gt;    &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       1:       1            1           1  1960-03-01    24  22.5         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       2:       2            1           1  1960-03-02    24  20.6         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       3:       3            1           1  1960-03-03    24  18.3         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       4:       4            1           1  1960-03-04    24  22.4         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       5:       5            1           1  1960-03-05    24  23.1         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ---                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579547: 7579547           NA          21  2024-03-12    21  73.6      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579548: 7579548           NA          21  2024-04-08    21  66.8      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579549: 7579549           NA          21  2024-08-16    21  76.2      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579550: 7579550           NA          21  2024-09-03    21  64.2      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579551: 7579551           NA          21  2024-10-01    21  67.0      &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          action_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       1:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       2:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       3:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       4:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       5:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ---          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579547:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579548:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579549:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579550:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7579551:         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "p_id %in% c(49)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "variable_id %in% c(11)"</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(timestamptz)`</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Aggregation through summarize ## chech quality after 1981</span></span></span>

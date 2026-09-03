@@ -32,7 +32,16 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/db_schema_with_ghcn.html">Spatiotemporal DB schema</a>
+    </li>
+    <li>
       <a href="../articles/db_schema.html">Spatiotemporal DB schema</a>
+    </li>
+    <li>
+      <a href="../articles/exporting_db_to_ems_xls_files.html">Spatiotemporal DB schema</a>
+    </li>
+    <li>
+      <a href="../articles/spatiotemporal-db-schema_ssod_va.html">Spatiotemporal DB schema</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -79,8 +88,159 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">variables</span> <span class="op">&lt;-</span> <span class="fu">get_variable</span><span class="op">(</span>x<span class="op">=</span><span class="va">db</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ID             name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1             TEMP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     2             DEWP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     3              SLP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     4              STP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     5            VISIB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     6             WDSP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     7            MXSPD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     8             GUST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     9              MAX</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    10              MIN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    11             PRCP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    12             SNDP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    13            I_FOG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    14   I_RAIN_DRIZZLE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    15       I_SNOW_ICE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:    16           I_HAIL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:    17        I_THUNDER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:    18 I_TORNADO_FUNNEL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:    19               EA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:    20               ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:    21               RH</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ID             name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                  description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                                                                                                                                                                                                                    Mean daily temperature converted to degrees C to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:                                                                                                                                                                                                                                      Mean daily dew point converted to degrees C to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                                                                                                                                                                                                             Mean sea level pressure in millibars to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                                                                                                                                                                                                   Mean station pressure for the day in millibars to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                                                                                                                                                                                              Mean visibility for the day converted to kilometres to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                                                                                                                                                                                           Mean daily wind speed value converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                                                                                                                                                                     Maximum sustained wind speed reported for the day converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                                                                                                                                                                                Maximum wind gust reported for the day converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                                                                                Maximum temperature reported during the day converted to Celsius to tenths–time of max temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                                                                                Minimum temperature reported during the day converted to Celsius to tenths–time of min temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: Total precipitation (rain and/or melted snow) reported during the day converted to millimetres to hundredths; will usually not end with the midnight observation, i.e., may include latter part of previous day. A value of “.00” indicates no measurable precipitation (includes a trace). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                                                                                                                                                                                                        Snow depth in millimetres to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                                                                                                                                                                                                                      Indicator for fog, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                                                                                                                                                                                                          Indicator for rain or drizzle, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                                                                                                                                                                                                      Indicator for snow or ice pellets, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:                                                                                                                                                                                                                     Indicator for hail, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:                                                                                                                                                                                                                  Indicator for thunder, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:                                                                                                                                                                                                  Indicator for tornado or funnel cloud, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:                                                                                                                                                              Mean daily actual vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                                                                                                                                                          Mean daily saturation vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:                                                                                                                                                                   Mean daily relative humidity as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                  description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     provider_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     provider_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;</span>
 <span class="r-in"><span><span class="va">variables</span> <span class="op">&lt;-</span> <span class="fu">get_variable</span><span class="op">(</span>x<span class="op">=</span><span class="va">db</span>,name<span class="op">=</span><span class="st">"PRCP"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ID             name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1             TEMP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     2             DEWP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     3              SLP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     4              STP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     5            VISIB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     6             WDSP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     7            MXSPD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     8             GUST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     9              MAX</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    10              MIN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    11             PRCP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    12             SNDP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    13            I_FOG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    14   I_RAIN_DRIZZLE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    15       I_SNOW_ICE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:    16           I_HAIL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:    17        I_THUNDER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:    18 I_TORNADO_FUNNEL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:    19               EA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:    20               ES</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:    21               RH</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ID             name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                  description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                                                                                                                                                                                                                    Mean daily temperature converted to degrees C to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:                                                                                                                                                                                                                                      Mean daily dew point converted to degrees C to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                                                                                                                                                                                                             Mean sea level pressure in millibars to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                                                                                                                                                                                                   Mean station pressure for the day in millibars to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                                                                                                                                                                                              Mean visibility for the day converted to kilometres to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                                                                                                                                                                                           Mean daily wind speed value converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                                                                                                                                                                     Maximum sustained wind speed reported for the day converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                                                                                                                                                                                Maximum wind gust reported for the day converted to metres/second to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                                                                                Maximum temperature reported during the day converted to Celsius to tenths–time of max temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                                                                                Minimum temperature reported during the day converted to Celsius to tenths–time of min temp report varies by country and region, so this will sometimes not be the max for the calendar day. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: Total precipitation (rain and/or melted snow) reported during the day converted to millimetres to hundredths; will usually not end with the midnight observation, i.e., may include latter part of previous day. A value of “.00” indicates no measurable precipitation (includes a trace). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                                                                                                                                                                                                        Snow depth in millimetres to tenths. Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                                                                                                                                                                                                                      Indicator for fog, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                                                                                                                                                                                                          Indicator for rain or drizzle, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                                                                                                                                                                                                      Indicator for snow or ice pellets, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:                                                                                                                                                                                                                     Indicator for hail, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:                                                                                                                                                                                                                  Indicator for thunder, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:                                                                                                                                                                                                  Indicator for tornado or funnel cloud, (1 = yes, 0 = no/not reported) for the occurrence during the day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:                                                                                                                                                              Mean daily actual vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                                                                                                                                                          Mean daily saturation vapour pressure as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:                                                                                                                                                                   Mean daily relative humidity as calculated using improved August-Roche-Magnus approximation (Alduchov and Eskridge 1996). Missing = NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                  description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     provider_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     provider_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "name %in% c('PRCP')"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
