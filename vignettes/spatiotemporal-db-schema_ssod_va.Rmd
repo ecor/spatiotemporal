@@ -154,7 +154,9 @@ db$ts <- rbind(db$ts,vv)
 tail(db$ts,n=20)
 ```
 ## Database Population with SSOD  : an example
-THis examples shows the direct download data from GHCN for years from 2025 to 2026 in Morocco. Assiming the same operator, a new project and a new action are created in the respective tables:
+
+Weather station time series can also be retrieved from NOAA's Synoptic Surface Summary of the Day (SSOD, formerly Global Summary of the Day / GSOD), a daily surface-observation dataset maintained by NOAA's National Centers for Environmental Information (NCEI). See the [SSOD dataset page](https://catalog.data.gov/dataset/synoptic-summary-of-the-day-ssod-version-2) for details.
+This examples shows the direct download data from GHCN for years from 2025 to 2026 in Morocco. Assiming the same operator, a new project and a new action are created in the respective tables:
 ```{r, echo=TRUE, results='asis'}
 ##
 db1 <- db
