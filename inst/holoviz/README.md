@@ -38,7 +38,7 @@ STDB_DATA=/path/to/db_parquet panel serve app.py --show
 ```
 
 The Parquet cache can also be written from R, which is much faster
-(needs `arrow`):
+(needs `nanoparquet` or `arrow`; `nanoparquet` installs without a C++20 compiler):
 
 ```bash
 Rscript export_db_parquet.R ../shiny/gsodapp/ext/db_icpac_v2.rds ../shiny/gsodapp/ext/db_icpac_v2_parquet

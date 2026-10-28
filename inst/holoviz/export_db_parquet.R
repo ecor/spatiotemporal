@@ -1,13 +1,22 @@
 ## Export a spatiotemporal `db` (named list of tables) to a Parquet folder
 ## readable by the HoloViz app (inst/holoviz/app.py).
 ## Faster alternative to `python stdb.py db.rda` (seconds instead of ~2 min).
+## Uses `arrow` if installed, otherwise the lightweight `nanoparquet`
+## (no C++20 compiler needed: install.packages("nanoparquet")).
 ##
 ## Usage:
 ##   Rscript export_db_parquet.R                       # data(db) -> ./db_parquet
 ##   Rscript export_db_parquet.R db_icpac_v2.rds out/  # any .rds with the same schema
 
 library(sf)
-library(arrow)
+
+write_pq <- if (requireNamespace("arrow", quietly = TRUE)) {
+  function(x, f) arrow::write_parquet(x, f)
+} else if (requireNamespace("nanoparquet", quietly = TRUE)) {
+  function(x, f) nanoparquet::write_parquet(x, f)
+} else {
+  stop("install.packages('nanoparquet') (or 'arrow') first")
+}
 
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) >= 1) {
@@ -28,7 +37,8 @@ for (it in names(db)) {
   }
   t <- as.data.frame(t)
   if (it == "ts") t <- t[order(t$variable_id, t$p_id, t$timestamptz), ]
-  arrow::write_parquet(t, file.path(out, sprintf("%s.parquet", it)))
+  rownames(t) <- NULL
+  write_pq(t, file.path(out, sprintf("%s.parquet", it)))
   message(sprintf("%-10s %10d rows", it, nrow(t)))
 }
 message("written to ", normalizePath(out))
