@@ -382,7 +382,7 @@ def schema_view():
         cards.append(pn.Card(pn.pane.HTML(
             f"<table style='width:100%;font-size:0.85em'><tr><th align=left>column</th>"
             f"<th align=left>type</th><th align=left>FK</th></tr>{rows}</table>"),
-            title=f"{t['table']}  ({t['rows']:,} rows)", collapsible=False, width=330, sizing_mode="fixed"))
+            title=f"{t['table']}  ({t['rows']:,} rows)", collapsible=False, width=330, sizing_mode=None))
     edges = [(t["table"], c["references"]) for t in sch for c in t["columns"] if c["references"]]
     nodes = sorted({x for e in edges for x in e})
     graph = hv.Graph((pd.DataFrame(edges, columns=["source", "target"]),

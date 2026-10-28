@@ -58,5 +58,13 @@ db = stdb.load("../../data/db.rda")
 prcp = db.get_ts(p_id=[12], variable_id=[11], start="1990-01-01")
 ```
 
+Behind a reverse proxy or another host/port (e.g. RStudio Server proxy on
+`rendena103.cloud:8787`), allow that browser origin:
+
+```bash
+panel serve app.py --port 5006 --allow-websocket-origin=rendena103.cloud:8787
+# or: export BOKEH_ALLOW_WS_ORIGIN=rendena103.cloud:8787
+```
+
 Set `STDB_DYNAMIC=1` to render tabs lazily (lighter server, but with some
 Panel/Bokeh versions hidden tabs come up empty — default is off).
