@@ -152,7 +152,29 @@ def aggregate(df, step, cover):
 # --------------------------------------------------------------------------- #
 # Map
 # --------------------------------------------------------------------------- #
-tiles = hv.element.tiles.CartoLight().opts(alpha=0.9)
+# Basemaps (XYZ tiles). Add your own with STDB_TILES="Name=https://.../{Z}/{X}/{Y}.png"
+# (several separated by ';'), e.g. a tile server reachable from your network.
+BASEMAPS = {
+    "OpenStreetMap": "https://tile.openstreetmap.org/{Z}/{X}/{Y}.png",
+    "OpenTopoMap": "https://a.tile.opentopomap.org/{Z}/{X}/{Y}.png",
+    "Esri World Imagery": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{Z}/{Y}/{X}",
+    "Esri World Topo": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{Z}/{Y}/{X}",
+    "Esri Terrain": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{Z}/{Y}/{X}",
+    "CARTO Light": "https://cartodb-basemaps-4.global.ssl.fastly.net/light_all/{Z}/{X}/{Y}.png",
+    "CARTO Dark": "https://cartodb-basemaps-4.global.ssl.fastly.net/dark_all/{Z}/{X}/{Y}.png",
+}
+for _item in filter(None, os.environ.get("STDB_TILES", "").split(";")):
+    _name, _, _url = _item.partition("=")
+    if _url:
+        BASEMAPS = {_name.strip(): _url.strip(), **BASEMAPS}
+w_basemap = pn.widgets.Select(name="Basemap", options=list(BASEMAPS), value=next(iter(BASEMAPS)))
+w_basemap_alpha = pn.widgets.FloatSlider(name="Basemap opacity", start=0.2, end=1, step=0.05, value=0.9)
+
+
+def basemap(name, alpha):
+    return hv.Tiles(BASEMAPS[name], name=name).opts(alpha=alpha)
+
+
 _current_points = {"df": P}
 
 
@@ -214,7 +236,8 @@ def _on_select(index):
 
 sel_stream.add_subscriber(_on_select)
 
-station_map = (tiles * dm_points * dm_sel * dm_lab).opts(
+dm_tiles = hv.DynamicMap(pn.bind(basemap, w_basemap, w_basemap_alpha))
+station_map = (dm_tiles * dm_points * dm_sel * dm_lab).opts(
     hv.opts.Overlay(height=520, responsive=True, active_tools=["wheel_zoom"], xaxis=None, yaxis=None,
                     title="Stations — colour = years with data"))
 
@@ -434,7 +457,7 @@ sidebar = [
     pn.pane.Markdown(header_md),
     w_variable, w_variable_desc, w_stations, btn_clear, w_provider, w_dates,
     pn.pane.Markdown("**Aggregation**"), w_agg, w_cover,
-    pn.layout.Divider(), w_compare, w_attr, w_minyears,
+    pn.layout.Divider(), w_basemap, w_basemap_alpha, w_compare, w_attr, w_minyears,
     pn.layout.Divider(), download,
 ]
 

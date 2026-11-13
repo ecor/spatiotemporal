@@ -10,7 +10,7 @@ Tabs:
 
 | Tab | What it shows |
 |---|---|
-| **Map & series** | stations on a CartoDB basemap, coloured by number of years with data for the chosen variable; click (toggle) or box-select stations; daily / monthly / yearly series |
+| **Map & series** | stations on a selectable basemap (OSM, OpenTopoMap, Esri, CARTO), coloured by number of years with data for the chosen variable; click (toggle) or box-select stations; daily / monthly / yearly series |
 | **Compare variables** | the chosen variable plus others (e.g. PRCP + MAX + MIN) for the same stations, shared time axis |
 | **Availability** | heat-map station × year of valid days (all stations of the selected providers, or only the selected ones) |
 | **Climatology** | mean annual cycle per station + box-plots of monthly values |
@@ -64,6 +64,14 @@ Behind a reverse proxy or another host/port (e.g. RStudio Server proxy on
 ```bash
 panel serve app.py --port 5006 --allow-websocket-origin=rendena103.cloud:8787
 # or: export BOKEH_ALLOW_WS_ORIGIN=rendena103.cloud:8787
+```
+
+Basemap: chosen in the sidebar (OpenStreetMap, OpenTopoMap, Esri imagery/topo/terrain,
+CARTO light/dark). Tiles are downloaded by the viewer's browser, so a provider blocked
+by the local network shows a blank map: pick another one, or add your own XYZ source:
+
+```bash
+STDB_TILES="MyTiles=https://tiles.example.org/{Z}/{X}/{Y}.png" panel serve app.py
 ```
 
 Set `STDB_DYNAMIC=1` to render tabs lazily (lighter server, but with some
