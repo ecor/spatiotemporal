@@ -50,3 +50,5 @@ rsconnect/
 
 # HoloViz app Parquet cache
 *_parquet/
+inst/holoviz/app-spatiotemporal.py
+inst/holoviz/__pycache__/

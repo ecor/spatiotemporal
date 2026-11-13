@@ -44,11 +44,21 @@ The Parquet cache can also be written from R, which is much faster
 Rscript export_db_parquet.R ../shiny/gsodapp/ext/db_icpac_v2.rds ../shiny/gsodapp/ext/db_icpac_v2_parquet
 ```
 
+## Start from RStudio Server (no open ports needed)
+
+```r
+source("~/local/rpackages/jrc/spatiotemporal/inst/holoviz/run_app.R")
+start_spatiotemporal_app()      # starts Panel and opens it via the RStudio proxy (:8787/p/...)
+spatiotemporal_app_log()        # last lines of the Panel log (~/.cache/spatiotemporal_panel_5006.log)
+stop_spatiotemporal_app()
+```
+
 ## Files
 
 - `stdb.py` – Python access layer: `load()`, `convert()` and R-like
   `get_p()` / `get_ts()` getters on a `SpatioTemporalDB` object.
 - `app.py` – the Panel app.
+- `run_app.R` – start/stop the app from RStudio Server and open it through the RStudio proxy.
 - `export_db_parquet.R` – optional R exporter to the same Parquet layout
   (one file per table; `p` gets `lon`/`lat` instead of the sf geometry).
 
