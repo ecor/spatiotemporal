@@ -53,6 +53,8 @@ spatiotemporal_app_log()        # last lines of the Panel log (~/.cache/spatiote
 stop_spatiotemporal_app()
 ```
 
+See [`README_run_app.md`](README_run_app.md) for all options and troubleshooting.
+
 ## Files
 
 - `stdb.py` – Python access layer: `load()`, `convert()` and R-like
