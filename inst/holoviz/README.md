@@ -10,7 +10,7 @@ Tabs:
 
 | Tab | What it shows |
 |---|---|
-| **Map & series** | stations on a CartoDB basemap, coloured by number of years with data for the chosen variable; click (toggle) or box-select stations; daily / monthly / yearly series |
+| **Map & series** | stations on a selectable basemap (OSM, OpenTopoMap, Esri, CARTO), coloured by number of years with data for the chosen variable; click (toggle) or box-select stations; daily / monthly / yearly series |
 | **Compare variables** | the chosen variable plus others (e.g. PRCP + MAX + MIN) for the same stations, shared time axis |
 | **Availability** | heat-map station × year of valid days (all stations of the selected providers, or only the selected ones) |
 | **Climatology** | mean annual cycle per station + box-plots of monthly values |
@@ -38,17 +38,29 @@ STDB_DATA=/path/to/db_parquet panel serve app.py --show
 ```
 
 The Parquet cache can also be written from R, which is much faster
-(needs `arrow`):
+(needs `nanoparquet` or `arrow`; `nanoparquet` installs without a C++20 compiler):
 
 ```bash
 Rscript export_db_parquet.R ../shiny/gsodapp/ext/db_icpac_v2.rds ../shiny/gsodapp/ext/db_icpac_v2_parquet
 ```
+
+## Start from RStudio Server (no open ports needed)
+
+```r
+source("~/local/rpackages/jrc/spatiotemporal/inst/holoviz/run_app.R")
+start_spatiotemporal_app()      # starts Panel and opens it via the RStudio proxy (:8787/p/...)
+spatiotemporal_app_log()        # last lines of the Panel log (~/.cache/spatiotemporal_panel_5006.log)
+stop_spatiotemporal_app()
+```
+
+See [`README_run_app.md`](README_run_app.md) for all options and troubleshooting.
 
 ## Files
 
 - `stdb.py` – Python access layer: `load()`, `convert()` and R-like
   `get_p()` / `get_ts()` getters on a `SpatioTemporalDB` object.
 - `app.py` – the Panel app.
+- `run_app.R` – start/stop the app from RStudio Server and open it through the RStudio proxy.
 - `export_db_parquet.R` – optional R exporter to the same Parquet layout
   (one file per table; `p` gets `lon`/`lat` instead of the sf geometry).
 
@@ -56,6 +68,22 @@ Rscript export_db_parquet.R ../shiny/gsodapp/ext/db_icpac_v2.rds ../shiny/gsodap
 import stdb
 db = stdb.load("../../data/db.rda")
 prcp = db.get_ts(p_id=[12], variable_id=[11], start="1990-01-01")
+```
+
+Behind a reverse proxy or another host/port (e.g. RStudio Server proxy on
+`rendena103.cloud:8787`), allow that browser origin:
+
+```bash
+panel serve app.py --port 5006 --allow-websocket-origin=rendena103.cloud:8787
+# or: export BOKEH_ALLOW_WS_ORIGIN=rendena103.cloud:8787
+```
+
+Basemap: chosen in the sidebar (OpenStreetMap, OpenTopoMap, Esri imagery/topo/terrain,
+CARTO light/dark). Tiles are downloaded by the viewer's browser, so a provider blocked
+by the local network shows a blank map: pick another one, or add your own XYZ source:
+
+```bash
+STDB_TILES="MyTiles=https://tiles.example.org/{Z}/{X}/{Y}.png" panel serve app.py
 ```
 
 Set `STDB_DYNAMIC=1` to render tabs lazily (lighter server, but with some
