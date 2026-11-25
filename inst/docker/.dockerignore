@@ -1,0 +1,4 @@
+data/
+.env
+*.md
+export_db_csv.R

@@ -50,3 +50,5 @@ rsconnect/
 
 # HoloViz app Parquet cache
 *_parquet/
+inst/docker/data/
+inst/docker/.env
