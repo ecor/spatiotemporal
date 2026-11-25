@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 LICENSE
 docs/^inst/holoviz/.*\.py$
+^inst/docker/data$
+^inst/docker/\.env$

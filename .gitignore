@@ -52,3 +52,5 @@ rsconnect/
 *_parquet/
 inst/holoviz/app-spatiotemporal.py
 inst/holoviz/__pycache__/
+inst/docker/data/
+inst/docker/.env

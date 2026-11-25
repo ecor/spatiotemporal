@@ -1,0 +1,37 @@
+# spatiotemporal-db su rendena103.cloud / rendena101.cloud
+#   cd inst/docker && cp .env.example .env && nano .env
+#   Rscript export_db_csv.R            # crea ./data/*.csv.gz
+#   docker compose up -d --build
+#   docker compose logs -f stdb        # segue il caricamento iniziale
+services:
+  stdb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: spatiotemporal-db:latest
+    container_name: stdb
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-spatiotemporal}
+      POSTGRES_USER: ${POSTGRES_USER:-ecor}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Imposta POSTGRES_PASSWORD nel file .env}
+      STDB_COMPRESS: ${STDB_COMPRESS:-false}
+      TZ: UTC
+      PGTZ: UTC
+    # Di default la porta è esposta SOLO su localhost del server:
+    # accesso remoto via tunnel SSH (vedi README). Per aprirla: "5432:5432".
+    ports:
+      - "${STDB_BIND:-127.0.0.1}:${STDB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./data:/data:ro
+    shm_size: 1g
+    command: >
+      postgres
+        -c shared_buffers=${PG_SHARED_BUFFERS:-1GB}
+        -c effective_cache_size=${PG_EFFECTIVE_CACHE_SIZE:-3GB}
+        -c maintenance_work_mem=${PG_MAINTENANCE_WORK_MEM:-512MB}
+        -c max_wal_size=4GB
+
+volumes:
+  pgdata:
