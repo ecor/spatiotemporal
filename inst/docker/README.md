@@ -8,7 +8,7 @@ database with the schema of the `db` variable of the R package
 
 ```
 inst/docker/
-├── Dockerfile              # postgis/postgis:17-3.5 + timescaledb (packagecloud)
+├── Dockerfile              # postgres:17-bookworm + PostGIS (PGDG) + timescaledb (packagecloud)
 ├── docker-compose.yml      # "stdb" service, persistent volume, port on localhost
 ├── .env.example            # credentials and parameters (copy to .env)
 ├── export_db_csv.R         # db (R) -> data/<table>.csv.gz

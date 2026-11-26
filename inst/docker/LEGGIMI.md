@@ -8,7 +8,7 @@ al primo avvio, lo popola con i dati esportati da R.
 
 ```
 inst/docker/
-├── Dockerfile              # postgis/postgis:17-3.5 + timescaledb (packagecloud)
+├── Dockerfile              # postgres:17-bookworm + PostGIS (PGDG) + timescaledb (packagecloud)
 ├── docker-compose.yml      # servizio "stdb", volume persistente, porta su localhost
 ├── .env.example            # credenziali e parametri (copiare in .env)
 ├── export_db_csv.R         # db (R) -> data/<tabella>.csv.gz

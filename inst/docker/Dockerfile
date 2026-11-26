@@ -4,8 +4,14 @@
 # Build:   docker build -t spatiotemporal-db inst/docker
 # Avvio:   vedi docker-compose.yml e README.md
 #
-# Immagine base: PostgreSQL 17 + PostGIS 3.5 (Debian bookworm).
-ARG BASE_IMAGE=postgis/postgis:17-3.5
+# Immagine base: PostgreSQL 17 ufficiale su Debian 12 bookworm.
+# (postgis/postgis:17-3.5 è su Debian 11 bullseye, il cui repository PGDG
+#  è stato archiviato: apt-get update fallisce con 404.)
+# PostGIS viene installato dal repository PGDG, già configurato nell'immagine
+# postgres; TimescaleDB dal repository ufficiale packagecloud.
+# Le estensioni vengono create in initdb/20_schema.sql.
+# NB: la base deve essere Debian (non -alpine) e definire PG_MAJOR.
+ARG BASE_IMAGE=postgres:17-bookworm
 FROM ${BASE_IMAGE}
 
 LABEL org.opencontainers.image.title="spatiotemporal-db" \
@@ -14,7 +20,9 @@ LABEL org.opencontainers.image.title="spatiotemporal-db" \
       org.opencontainers.image.licenses="EUPL-1.2" \
       org.opencontainers.image.authors="Emanuele Cordano <emanuele.cordano@gmail.com>"
 
-# --- TimescaleDB dal repository ufficiale (packagecloud) ----------------------
+ENV POSTGIS_MAJOR=3
+
+# --- PostGIS (PGDG) + TimescaleDB (packagecloud) ------------------------------
 # PG_MAJOR è già definita dall'immagine postgres ufficiale (qui 17).
 RUN set -eux; \
     apt-get update; \
@@ -26,9 +34,11 @@ RUN set -eux; \
       > /etc/apt/sources.list.d/timescaledb.list; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
+      "postgresql-${PG_MAJOR}-postgis-${POSTGIS_MAJOR}" \
+      "postgresql-${PG_MAJOR}-postgis-${POSTGIS_MAJOR}-scripts" \
       "timescaledb-2-postgresql-${PG_MAJOR}" \
       timescaledb-tools; \
-    apt-get purge -y --auto-remove gnupg; \
+    apt-get purge -y --auto-remove curl gnupg; \
     rm -rf /var/lib/apt/lists/*
 
 # TimescaleDB deve essere caricato all'avvio del server.
@@ -41,7 +51,6 @@ RUN set -eux; \
 
 # --- Script di inizializzazione ----------------------------------------------
 # Eseguiti (in ordine alfabetico) solo al PRIMO avvio, con volume dati vuoto.
-# 10_postgis.sh è già fornito dall'immagine postgis/postgis.
 COPY initdb/20_schema.sql  /docker-entrypoint-initdb.d/20_schema.sql
 COPY initdb/30_load_db.sh  /docker-entrypoint-initdb.d/30_load_db.sh
 RUN chmod 0755 /docker-entrypoint-initdb.d/30_load_db.sh
@@ -51,7 +60,9 @@ ENV STDB_DATA_DIR=/data \
     STDB_COMPRESS=false
 RUN mkdir -p /data
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
-  CMD pg_isready -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-postgres}" || exit 1
+# -h 127.0.0.1: durante gli script di init il server temporaneo ascolta solo
+# sul socket Unix, quindi il container risulta "healthy" solo a caricamento finito.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=600s --retries=5 \
+  CMD pg_isready -h 127.0.0.1 -p 5432 -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-postgres}" || exit 1
 
 EXPOSE 5432
