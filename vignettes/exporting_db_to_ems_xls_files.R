@@ -182,6 +182,11 @@ tail(db$ts,n=20)
 
 ## ----echo=TRUE, results='asis'------------------------------------------------
 
+knitr::kable(db$variable)
+
+
+## ----echo=TRUE, results='asis'------------------------------------------------
+
 library(readxl)
 library(openxlsx)
 
@@ -204,7 +209,7 @@ ts_ems_edit  <- ts_ems
 
 vvts <- get_ts(db,get_action_args=list(description=action_description))
 ###
-vvts <- vvts |> dplyr::filter(year(vvts$timestamptz)==2023,month(vvts$timestamptz) %in% c(6,7,8))
+###vvts <- vvts |> dplyr::filter(year(vvts$timestamptz)==2023,month(vvts$timestamptz) %in% c(6,7,8))
 ###
 
 vvp <- get_p(db,ID=unique(vvts$p_id))
