@@ -2,7 +2,7 @@ NULL
 #' Put a table, e.g. variables (or measurement types)
 #'
 #' @param x object to put in the \code{db}
-#' @param db database or dateset, e.g  like \code{\link{db}}
+#' @param db database or dateset, e.g  like \code{\link{db}}, or a database connection (see \code{\link{stdb_connect}}). With a database, the rows are inserted with \code{INSERT} and the identifiers are assigned by the database; the connection is returned, with the new identifiers in \code{attr(, "inserted_id")}.
 #' @param table_name variable table name 
 #' @param vfilter (possible) character string containg the filtering condition. See \code{dplyr::\link{filter}}.
 #' @param data.table logical option. If \code{TUE} returns a \code{data.table} object
@@ -43,6 +43,10 @@ NULL
 put_in_table <- function(x,db,table_name="provider",vfilter=NULL,data.table=(table_name!="p"),sf=(table_name=="p"),...) {
   
   
+  if (is_db_connection(db)) {
+    return(db_put_in_table(x, con = db, table_name = table_name, sf = sf))
+  }
+
   new_table <- db[[table_name]]
   ntables <- names(db)
   external_ids <- paste0(names(db),"_id")

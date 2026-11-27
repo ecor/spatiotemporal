@@ -7,7 +7,7 @@
 get_p(x, p = NULL, p_table_name = "p", data.table = FALSE, sf = TRUE, ...)
 }
 \arguments{
-\item{x}{database or dateset, e.g  like \code{\link{db}}}
+\item{x}{database or dateset, e.g  like \code{\link{db}}, or a database connection (see \code{\link{stdb_connect}}). With a database, the spatial selection is executed by PostGIS (\code{ST_Intersects}).}
 
 \item{p}{spatial (e.g. \code{sf}) object in which extract the observation station.}
 

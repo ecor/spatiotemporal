@@ -125,6 +125,17 @@ m <- dbGetQuery(con, "
   FROM ts WHERE variable_id = 11 GROUP BY 1, 2 ORDER BY 1")
 ```
 
+### With the spatiotemporal functions
+
+The connection can be used directly in place of `data(db)`:
+
+```r
+library(spatiotemporal)
+con <- stdb_connect(host = "localhost", port = 5432, dbname = "spatiotemporal",
+                    user = "ecor", password = Sys.getenv("STDB_PASSWORD"))
+prcp <- get_ts(x = con, p_id = 49, get_variable_args = list(name = "PRCP"))
+```
+
 ## Security
 
 * Use a strong password in `.env` and never commit `.env` to git.

@@ -7,7 +7,7 @@
 get_schema(db, ...)
 }
 \arguments{
-\item{db}{db}
+\item{db}{db, an R object like \code{\link{db}} or a database connection (see \code{\link{stdb_connect}})}
 
 \item{...}{further arguments}
 }

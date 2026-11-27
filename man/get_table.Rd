@@ -14,7 +14,7 @@ get_table(
 )
 }
 \arguments{
-\item{x}{database or dateset, e.g  like \code{\link{db}}}
+\item{x}{database or dateset, e.g  like \code{\link{db}}, or a connection to a PostgreSQL/PostGIS/TimescaleDB database (see \code{\link{stdb_connect}}). In this case filters are translated into SQL (through \code{dbplyr}) and executed by the database.}
 
 \item{table_name}{variable table name}
 

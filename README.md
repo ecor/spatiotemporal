@@ -33,6 +33,41 @@ help(db)
 
 ```
 
+## Database backend: R object or PostgreSQL/PostGIS/TimescaleDB
+
+All the functions of the package (`get_table()`, `get_p()`, `get_ts()`,
+`get_variable()`, `put_in_table()`, `get_schema()`, ...) accept as `x` (or `db`)
+either an R object like `data(db)` or a DBI connection to a
+PostgreSQL/PostGIS/TimescaleDB database with the same schema
+(see `inst/docker`). With a database, filters are translated into SQL
+(via `dbplyr`) and spatial selections into PostGIS `ST_Intersects`, so only
+the requested rows are transferred to R.
+
+Extra packages needed: `DBI`, `dbplyr` and `RPostgres` (or `RPostgreSQL`).
+
+```r
+library(spatiotemporal)
+
+## e.g. through an SSH tunnel: ssh -N -L 5432:127.0.0.1:5432 ecor@rendena103.cloud
+con <- stdb_connect(dbname = "spatiotemporal", user = "ecor")   # password in ~/.pgpass or PGPASSWORD
+
+p    <- get_p(x = con)                                   # sf, EPSG:4326
+px   <- p[49, ] |> st_buffer(dist = 250 * 1000)
+prcp <- get_ts(x = con, get_p_args = list(p = px),
+               get_variable_args = list(name = "PRCP"))
+
+## insert new rows (ids are assigned by the database)
+con <- put_in_table(data.table(name = "asdf"), db = con, table_name = "provider")
+attr(con, "inserted_id")
+
+## copy an R db into an empty PostgreSQL database, and back
+data(db)
+write_db_to_postgres(db, con)        # creates the schema (TimescaleDB if available)
+db2 <- read_db_from_postgres(con)
+
+DBI::dbDisconnect(con)
+```
+
 ## Database Schema 
 
 

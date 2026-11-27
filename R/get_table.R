@@ -2,7 +2,7 @@ NULL
 #' Get a table, e.g. variables (or measurement types)
 #'
 #'
-#' @param x database or dateset, e.g  like \code{\link{db}}
+#' @param x database or dateset, e.g  like \code{\link{db}}, or a connection to a PostgreSQL/PostGIS/TimescaleDB database (see \code{\link{stdb_connect}}). In this case filters are translated into SQL (through \code{dbplyr}) and executed by the database.
 #' @param table_name variable table name 
 #' @param vfilter (possible) character string containg the filtering condition. See \code{dplyr::\link{filter}}.
 #' @param data.table logical option. If \code{TUE} returns a \code{data.table} object
@@ -35,6 +35,13 @@ get_table <- function(x,table_name="ts",vfilter=NULL,data.table=(table_name!="p"
   
 
   
+  if (is_db_connection(x)) {
+    out <- db_get_table(x, table_name = table_name, vfilter = vfilter,
+                        data.table = data.table, sf = sf,
+                        further_args = list(...))
+    return(out)
+  }
+
   out <- x[[table_name]]
   print(out)
   if (length(vfilter)>0) for (i in 1:length(vfilter)) {

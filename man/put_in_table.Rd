@@ -17,7 +17,7 @@ put_in_table(
 \arguments{
 \item{x}{object to put in the \code{db}}
 
-\item{db}{database or dateset, e.g  like \code{\link{db}}}
+\item{db}{database or dateset, e.g  like \code{\link{db}}, or a database connection (see \code{\link{stdb_connect}}). With a database, the rows are inserted with \code{INSERT} and the identifiers are assigned by the database; the connection is returned, with the new identifiers in \code{attr(, "inserted_id")}.}
 
 \item{table_name}{variable table name}
 

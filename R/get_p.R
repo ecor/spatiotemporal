@@ -2,7 +2,7 @@ NULL
 #' Get station (or measurement points)
 #'
 #'
-#' @param x database or dateset, e.g  like \code{\link{db}}
+#' @param x database or dateset, e.g  like \code{\link{db}}, or a database connection (see \code{\link{stdb_connect}}). With a database, the spatial selection is executed by PostGIS (\code{ST_Intersects}).
 #' @param p spatial (e.g. \code{sf}) object in which extract the observation station. 
 #' @param p_table_name p table name 
 #' @param data.table,sf,... further arguments \code{\link{get_table}}
@@ -47,6 +47,14 @@ NULL
 get_p <- function(x,p=NULL,p_table_name="p",data.table=FALSE,sf=TRUE,...) {
   
   
+  if (is_db_connection(x)) {
+    spatial_ewkt <- NULL
+    if (!is.null(p)) spatial_ewkt <- spatial_filter_ewkt(p, crop = !inherits(p, "sf"))
+    out <- db_get_table(x, table_name = p_table_name, data.table = data.table, sf = sf,
+                        further_args = list(...), spatial_ewkt = spatial_ewkt)
+    return(out)
+  }
+
   out <- get_table(x,table_name=p_table_name,data.table=data.table,sf=sf,...)
   
   if (inherits(p,"sf")) {

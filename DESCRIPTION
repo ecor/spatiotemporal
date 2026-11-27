@@ -4,14 +4,15 @@ License: EUPL (>= 1.2)
 Title: Tools to handle spatiotemporal data organized in Time Series
 Type: Package
 Authors@R: c(person(given="Emanuele",family="Cordano",role = c("aut","cre"),email = "emanuele.cordano@gmail.com",comment = c(ORCID=  "0000-0002-3508-5898")))
-Description: A spatiotemporal database schema. It has been created to handle weather data from weather stations. 
+Description: A spatiotemporal database schema. It has been created to handle weather data from weather stations. The database can be an R object (a list of tables, see db) or a PostgreSQL/PostGIS/TimescaleDB database accessed through DBI.
 Repository: Github
 URL: none
-Date: 2025-11-07
-Version: 0.0.3
+Date: 2026-11-27
+Version: 0.0.4
 Depends:
     R (>= 3.5.0),sf,data.table
 Imports: rlang,dplyr,stringr
-Suggests: nomnoml,terra,leaflet,ggplot2,knitr,GSODR,countrycode,crosstalk,httr,openxlsx,plotly,readxl,xml2
+Suggests: DBI,dbplyr,RPostgres,RPostgreSQL,testthat (>= 3.0.0),nomnoml,terra,leaflet,ggplot2,knitr,GSODR,countrycode,crosstalk,httr,openxlsx,plotly,readxl,xml2
 VignetteBuilder: knitr
 Config/roxygen2/version: 8.0.0
+Config/testthat/edition: 3

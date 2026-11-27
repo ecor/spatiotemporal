@@ -2,7 +2,7 @@ NULL
 #' 
 #' Render/show DB schema
 #'
-#' @param db db
+#' @param db db, an R object like \code{\link{db}} or a database connection (see \code{\link{stdb_connect}})
 #' @param ... further arguments
 #'
 #' @export
@@ -29,16 +29,27 @@ NULL
 
 
 get_schema <- function(db,...) {
-  schema <- lapply(db, FUN=function(t, nfks) {
+  if (is_db_connection(db)) {
+    db_schema <- db_get_schema(db)
+    tnames <- names(db_schema)
+  } else {
+    db_schema <- db
+    tnames <- names(db)
+  }
+  schema <- lapply(db_schema, FUN=function(t, nfks) {
     print(nfks)
-    o <- sapply(as.list(t), FUN=function(x) {class(x)})
-    o2 <- data.frame(column=names(o), type=as.character(o))
+    if (inherits(t, "stdb_db_columns")) {
+      o2 <- as.data.frame(t)
+    } else {
+      o <- sapply(as.list(t), FUN=function(x) {class(x)[1]})
+      o2 <- data.frame(column=names(o), type=as.character(o))
+    }
     o2$reference <- as.character(NA)
     iin <- which(o2$column %in% nfks)
     o2$reference[iin] <- o2$column[iin]
     o2$reference[iin] <- str_sub(o2$reference[iin], end=-4)
     return(o2)
-  }, nfks=sprintf("%s_id", names(db)))
+  }, nfks=sprintf("%s_id", tnames))
   
   out2 <- list()
   for (it in names(schema)) {
